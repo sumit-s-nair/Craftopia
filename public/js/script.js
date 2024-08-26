@@ -176,130 +176,147 @@ function validateEmail(email) {
     return emailPattern.test(email);
 }
 //forgot password ended
+//product.html
+let cartItems = [];
+
+
+function addToCart(productName, productPrice) {
+    
+    const selectedOption = document.querySelector(`input[name="${productName}-size"]:checked`);
+
+    if (selectedOption) {
+        const item = {
+            name: productName,
+            size: selectedOption.value.split(": ")[0],
+            price: parseFloat(selectedOption.value.split(": ")[1]),
+            quantity: 1,
+        };
+
+        cartItems.push(item);
+
+       
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+       
+        window.location.href = 'cart.html';
+    } else {
+        alert("Please select an option before adding to the cart.");
+    }
+}
+
+
+document.querySelectorAll('.product button').forEach(button => {
+    button.addEventListener('click', function() {
+        const productName = this.parentElement.querySelector('p').textContent.trim();
+        const productPrice = this.parentElement.querySelector('input[name^="product-"]').value;
+        addToCart(productName, productPrice);
+    });
+});
+
+//product.html ended
 
 // cart.html 
-// Example cart data - replace with real data or fetch from your backend
-const cartItems = [
-    { id: 1, name: "Resin Frame", price: 500, quantity: 1, customization: "" },
-    { id: 2, name: "Vintage Frame", price: 400, quantity: 2, customization: "" },
-    { id: 3, name: "Scrapbook", price: 250, quantity: 1, customization: "" }
-];
+function loadCartItems() {
+    const cartTableBody = document.querySelector('#cart tbody');
+    const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-function renderCart() {
-    const cartTableBody = document.querySelector("#cart tbody");
-    const totalAmountEl = document.getElementById("total-amount");
     let totalAmount = 0;
 
-    cartTableBody.innerHTML = ""; 
+    
+    cartTableBody.innerHTML = '';
 
-    cartItems.forEach((item, index) => {
-        const row = document.createElement("tr");
-
-        const itemTotal = item.price * item.quantity;
-        totalAmount += itemTotal;
+    
+    storedCartItems.forEach((item, index) => {
+        const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td>${item.name}</td>
-            <td>₹${item.price}</td>
-            <td>
-                <input type="number" value="${item.quantity}" min="1" class="quantity" data-index="${index}">
-            </td>
-            <td>
-                <input type="text" placeholder="Enter customizations" value="${item.customization}" class="customization" data-index="${index}">
-            </td>
-            <td>₹<span class="item-total">${itemTotal}</span></td>
-            <td><button class="remove-btn" data-index="${index}">Remove</button></td>
+            <td>${item.name} - ${item.size}</td>
+            <td>&#8377;${item.price}</td>
+            <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="quantity-input"></td>
+            <td><input type="text" placeholder="Enter customizations" class="customization-input" data-index="${index}"></td>
+            <td>&#8377;<span class="item-total">${item.price * item.quantity}</span></td>
+            <td><button data-index="${index}" class="remove-btn">Remove</button></td>
         `;
 
         cartTableBody.appendChild(row);
+
+        totalAmount += item.price * item.quantity;
     });
 
-    totalAmountEl.textContent = totalAmount;
+    
+    document.getElementById('total-amount').textContent = totalAmount;
+
+    
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', removeCartItem);
+    });
+
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', updateQuantity);
+    });
 }
 
-function updateCartItem(index, quantity, customization) {
-    cartItems[index].quantity = quantity;
-    cartItems[index].customization = customization;
-    renderCart();
-}
 
-function removeCartItem(index) {
+function removeCartItem(event) {
+    const index = event.target.dataset.index;
     cartItems.splice(index, 1);
-    renderCart();
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    loadCartItems();
 }
 
 
-document.querySelector("#cart").addEventListener("input", (e) => {
-    const index = e.target.dataset.index;
+function updateQuantity(event) {
+    const index = event.target.dataset.index;
+    const newQuantity = parseInt(event.target.value);
+    cartItems[index].quantity = newQuantity;
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    loadCartItems();
+}
 
-    if (e.target.classList.contains("quantity")) {
-        const quantity = parseInt(e.target.value, 10);
-        updateCartItem(index, quantity, cartItems[index].customization);
-    } else if (e.target.classList.contains("customization")) {
-        const customization = e.target.value;
-        updateCartItem(index, cartItems[index].quantity, customization);
-    }
-});
-
-document.querySelector("#cart").addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-btn")) {
-        const index = e.target.dataset.index;
-        removeCartItem(index);
-    }
-});
-
-renderCart();
+document.addEventListener('DOMContentLoaded', loadCartItems);
 //cart.html ended
 
 //order.html
 
-function calculateTotal() {
-    let totalAmount = 0;
-    cartItems.forEach(item => {
-        totalAmount += item.quantity * item.price;
-    });
-    return totalAmount;
-}
-
-
-function generateOrderSummary() {
+function loadOrderItems() {
     const orderTableBody = document.querySelector('#order-table tbody');
-    orderTableBody.innerHTML = ''; 
+    const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-    cartItems.forEach(item => {
+    let totalAmount = 0;
+
+   
+    orderTableBody.innerHTML = '';
+
+   
+    storedCartItems.forEach(item => {
         const row = document.createElement('tr');
+
         row.innerHTML = `
-            <td>${item.product}</td>
+            <td>${item.name} - ${item.size}</td>
             <td>${item.quantity}</td>
-            <td>&#8377;${item.price.toFixed(2)}</td>
-            <td>&#8377;${(item.quantity * item.price).toFixed(2)}</td>
+            <td>&#8377;${item.price}</td>
+            <td>&#8377;${item.price * item.quantity}</td>
         `;
+
         orderTableBody.appendChild(row);
+
+        totalAmount += item.price * item.quantity;
     });
 
-    
-    document.getElementById('total-amount').textContent = calculateTotal().toFixed(2);
+   
+    document.getElementById('total-amount').textContent = totalAmount;
 }
 
 
 document.getElementById('order-form').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-
-    const name = document.getElementById('name').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-
+    event.preventDefault();
     
-    if (name === '' || address === '' || phone === '') {
-        alert('Please fill in all the fields.');
-        return;
-    }
-
-    alert('Order placed successfully!');
-    window.location.href = '../pages/payment.html';
+    
+    window.location.href = 'payment.html';
 });
 
-generateOrderSummary();
+
+document.addEventListener('DOMContentLoaded', loadOrderItems);
 //order.html ended
 
 //payment.html 
@@ -312,8 +329,14 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         const selectedPaymentMethod = paymentMethodSelect.value;
+        const paymentId = Date.now(); // Unique ID for the payment
+        const userName = 'User Name'; // Replace with actual user name
+        const userEmail = 'user@example.com'; // Replace with actual user email
+        const amount = 500; // Replace with actual amount
+        const paymentMehtod= 'UPI or cash or debit/credit'// Replace with actual method
+        const date = new Date().toLocaleDateString();
+        const status = 'Completed'; // Payment status
 
-        
         if (selectedPaymentMethod === 'cod') {
             alert('Cash on Delivery selected. You can pay when the product is delivered.');
         } else if (selectedPaymentMethod === 'upi') {
@@ -334,8 +357,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        // Store payment information in localStorage
+        const paymentRecord = {
+            paymentId,
+            userName,
+            userEmail,
+            amount,
+            paymentMehtod,
+            date,
+            status
+        };
+        let paymentRecords = JSON.parse(localStorage.getItem('paymentRecords')) || [];
+        paymentRecords.push(paymentRecord);
+        localStorage.setItem('paymentRecords', JSON.stringify(paymentRecords));
+
         paymentForm.classList.add('hidden');
         orderConfirmation.classList.remove('hidden');
+
+        setTimeout(() => {
+            localStorage.removeItem('cartItems');
+            window.location.href = 'index.html';
+        }, 3000);
     });
 });
 //payment.html ended
@@ -538,9 +580,9 @@ document.addEventListener('DOMContentLoaded', function () {
             tableBody.appendChild(row);
         });
     }
-    // Initial render of all orders
+   
     renderOrders(orders);
-    // Event delegation for details button
+    
     tableBody.addEventListener('click', function (event) {
         if (event.target.classList.contains('details-btn')) {
             const orderId = event.target.getAttribute('data-id');
@@ -552,3 +594,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //view-orders.html ended
+// admin payment.html 
+document.addEventListener('DOMContentLoaded', () => {
+    const paymentRecords = document.querySelectorAll('#payment-records tr');
+    let totalBalance = 0;
+
+    paymentRecords.forEach(record => {
+        const amountCell = record.querySelector('td:nth-child(4)');
+        if (amountCell) {
+            const amount = parseFloat(amountCell.textContent.replace('₹', '').trim());
+            if (!isNaN(amount)) {
+                totalBalance += amount;
+            }
+        }
+    });
+
+    document.getElementById('total-balance').textContent = totalBalance.toFixed(2);
+});
+// admin payment.html ended

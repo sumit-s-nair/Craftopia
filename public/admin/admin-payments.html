@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments Received </title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Payment Received</h1>
+    <nav class="navbar">
+
+        <ul class="nav-list">
+        <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;
+        
+        <div class="tagline">
+            <h2 class="tagline">Welcome to Craftopia </h2>
+            <span id="typedText" class="typed-text"></span>
+        </div> &nbsp;         
+        <a href="../admin/add-product.html">Add Product</a>
+        <a href="../admin/view-orders.html">View Orders</a>
+        <a href="../admin/view-customers.html">View Customers</a>
+        <a href="../admin/admin-payments.html">Payment Received</a>
+        <a href="../pages/index.html">Logout</a>
+          
+        </ul> <br> 
+</header>
+<main>
+    <div class="balance-summary">
+        <h2>Total Balance: ₹<span id="total-balance">0.00</span></h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Payment ID</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Amount (₹)</th>
+                <th>Payment Method</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="payment-records">
+            <!-- Payment records will be populated here via JavaScript -->
+        </tbody>
+    </table>
+</main>
+
+<script src="../js/script.js"></script>
+</body>
+</html>
