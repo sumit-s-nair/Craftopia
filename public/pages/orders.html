@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Page</title>
+    <link rel="stylesheet" href="../css/style.css">
+   <script src="../js/script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Order Confirmation</h1>
+
+        <nav class="navbar">
+
+            <ul class="nav-list">
+            <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;
+            
+            <div class="tagline">
+                <h2 class="tagline">Welcome to Craftopia </h2>
+                <span id="typedText" class="typed-text"></span>
+            </div>&nbsp;  
+            <a href="index.html">Home</a> &nbsp;
+            <a href="cart.html"> add to cart</a> &nbsp;
+            <a href="product.html">Products</a>   &nbsp;     
+    
+              
+            </ul> <br>
+
+        <div class="rightnav"> 
+            <div class="search-container"> &nbsp;
+
+            <input type="text" id="SearchInput" placeholder="search the Products"onkeyup="filterProducts()"> &nbsp;
+            <button class="btn btn-sm">Search</button> &nbsp;
+
+                <div id="dropdownList" class="dropdown-content">
+                <a href="#">Resin Frames</a> <br>
+                <a href="#">Vintage Frames</a> <br>
+                <a href="#">Scrapbooks,GreetingCards</a> <br>
+                <a href="#">Resin Keychain</a><br>
+                <a href="#">Resin Bookmarks</a> <br>
+                <a href="#">Wallet Cards</a> <br>
+                </div>
+            </div>
+     </div> 
+        
+    </header>
+    <main>
+        <div id="order-summary">
+            <h2>Order Summary</h2>
+            <table id="order-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Order items will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="order-total">
+                <h3>Total: &#8377;<span id="total-amount">0.00</span></h3>
+            </div>
+        </div>
+        <div id="order-details">
+            <h2>Order Details</h2>
+            <form id="order-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required></textarea>
+                
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+                
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        &copy; 2024 Handmade Crafts - Craftopia | 
+        <a href="https://www.instagram.com/craftopia08?igsh=M3kybDgxMGE4YjRp" target="_blank">Follow us on Instagram</a> | 
+        Contact us: +91-1234567890
+   
+    </footer>
+    <script>
+        document.getElementById('confirmOrderBtn').addEventListener('click', function() {
+            window.location.href = '../pages/payment.html'; // Redirect to payment page
+        });
+    </script>
+</body>
+</html>

@@ -9,145 +9,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
     <title>Handmade Crafts- Craftopia</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js"></script>
 </head>
 
 <body>
-    <header class="nav-bar">
-        <div class="logo">
-            <img src="../assets/images/logo.jpeg" width="50px" alt="logo">
-            <h1>Craftopia</h1>
-        </div>
+    <header>
+        <h1>Craftopia</h1>
 
-        <div class="nav-links">
-            <a href="/">Home</a> &nbsp;
-            <a href="/orders">Orders</a> &nbsp;
-            <a href="/login">Login</a> &nbsp;
-            <a href="/cart">Cart</a>
-        </div>
-        <div class="search-container"> &nbsp;
-            <input type="text" id="SearchInput" placeholder="Search the Products" onkeyup="filterProducts()"> &nbsp;
+        <nav class="navbar">
+
+            <ul class="nav-list">
+            <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;
+            
+            <div class="tagline">
+                <h2 class="tagline">Welcome to Craftopia </h2>
+                <span id="typedText" class="typed-text"></span>
+            </div> &nbsp;         
+    
+                <a href="index.html">Home</a> &nbsp;
+                <a href="orders.html"> My Orders</a> &nbsp;
+                <a href="cart.html"> add to cart</a> &nbsp;
+                <a href="register.html">Login</a> &nbsp;
+                <a href="product.html">Products</a>&nbsp;
+            </ul> <br>
+
+        <div class="rightnav"> 
+            <div class="search-container"> &nbsp;
+
+            <input type="text" id="SearchInput" placeholder="search the Products"onkeyup="filterProducts()"> &nbsp;
             <button class="btn btn-sm">Search</button> &nbsp;
 
-            <div id="dropdownList" class="dropdown-content">
-                <a href="#">Resin Frames</a>
-                <a href="#">Vintage Frames</a>
-                <a href="#">Scrapbooks,GreetingCards</a>
-                <a href="#">Resin Keychain</a>
-                <a href="#">Resin Bookmarks</a>
-                <a href="#">Wallet Cards</a>
+                <div id="dropdownList" class="dropdown-content">
+                <a href="#">Resin Frames</a> <br>
+                <a href="#">Vintage Frames</a> <br>
+                <a href="#">Scrapbooks,GreetingCards</a> <br>
+                <a href="#">Resin Keychain</a><br>
+                <a href="#">Resin Bookmarks</a> <br>
+                <a href="#">Wallet Cards</a> <br>
+                </div>
             </div>
-        </div>
-
+     </div>  
+    </nav> <br>
     </header>
-    <div class="tagline">
-        <h2 class="">Welcome to Craftopia </h2>
-        <span id="typedText" class="typed-text"></span>
-    </div>
     <main>
         <h2>Glimse of the Products</h2>
         <div class="myvideo">
-            <video autoplay loop muted src="../assets/video/video.mp4" alt="video">
+            <video autoplay loop muted   src="../assets/video/video.mp4" alt="video">
         </div> <br>
-
-        <section class="product-list">
-            <div class="product">
-                <p>Customised your Resin Frames</p>
-                <img src="../assets/images/resin frame.webp" alt="Resin Frames">
-                <p> Capturing the beauty of the unexpected in every resin creation</p>
-                <p>you can customised your frames in different sizes</p>
-                <button>
-                    <p>5inches:500&#8377;</p>
-                </button>
-                <button>
-                    <p>6inches:600&#8377;</p>
-                </button>
-                <button>
-                    <p>8inches:750&#8377;</p>
-                </button>
-                <button>add to cart</button> <br>
-            </div>
-            <div class="product">
-                <p>Customised your Vintage Frames</p>
-                <img src="../assets/images/vintage-frame.webp" alt="vintage-frame">
-                <div class="vintagevideo">
-                    <video autoplay loop muted src="../assets/video/vintage video1.mp4"></video>
-                </div>
-                <p>Living in a vintage dream</p>
-                <p> you can customised your vintage-frame in different sizes</p>
-                <button>
-                    <p>5*7:400&#8377;</p>
-                </button>
-                <button>
-                    <p>6*8:450&#8377;</p>
-                </button>
-                <button>
-                    <p>A4 size:750&#8377;</p>
-                </button>
-                <button>add to cart</button> <br>
-            </div>
-            <div class="product">
-                <p>Customised your Scrapbooks, Birthday Cards</p>
-                <img src="../assets/images/birthdaycard.jpg" alt="Cards">
-                <div class="Scrapbooks"><video autoplay loop muted src="../video/Scrapbooks, Greetingcards.mp4"></video>
-                </div>
-                <p>Cards that whisper stories</p>
-                <p> we have different types of cards for different occassions Customised your cards <br>
-                    <b>this rate depends on Customised</b>
-                </p>
-                <button>
-                    <p>Scrapbooks 5pages: 250&#8377;</p>
-                </button>
-                <button>
-                    <p>birthdaycard starting rate:200&#8377; </p>
-                </button>
-                <button>add to cart</button> <br>
-            </div>
-            <div class="product">
-                <p> Customised Resin Keychains</p>
-                <img src="../assets/images/resinkeychain1.jfif" alt="Keychain1">
-                <p>Resin Keychains colorfull design</p>
-                <button>70&#8377;</button>
-                <button>add to cart</button> <br>
-                <img src="../assets/images/resinkeychain2.avif" alt="Keychain2">
-                <p>Resin keychains Floral design</p>
-                <button>90&#8377;</button>
-                <button>add to cart</button> <br>
-                <img src="../assets/images/resinkeychain3.webp" alt="Keychain3">
-                <p> Photo Resin Keychains </p>
-                <button>100&#8377;</button>
-                <button>add to cart</button> <br>
-            </div>
-            <div class="product">
-                <p>Customised your Bookmarks</p>
-                <img src="../assets/images/ResinBookmark1.webp" alt="Bookmarks1">
-                <p>Floral Design</p>
-                <button>150&#8377;</button>
-                <button>add to cart</button> <br>
-                <img src="../assets/images/resinbookmark2.png" alt="Bookmarks2">
-                <p>Preserve your Rose</p>
-                <button>200&#8377;</button>
-                <button>add to cart</button> <br>
-                <img src="../assets/images/resinbookmark3.webp" alt="Bookmarks3">
-                <p>Bookmarks with quotes,Lovemessges</p>
-                <button>250&#8377;</button>
-                <button>add to cart</button><br>
-            </div>
-            <div class="product">
-                <p>Customised your Wallet Cards</p>
-                <div class="Wallet">
-                    <video autoplay loop muted src="../assets/video/wallet card.mp4"></video>
-                </div>
-                <p>Personalize your day with a Normal + Quote Wallet Card,Featuring inspirational quotes, perfect for
-                    carrying meaningful message</p>
-                <button>200&#8377;</button>
-                <button>add to cart</button> <br>
-            </div>
-        </section>
+        
+    
+        
     </main>
     <footer>
-        &copy; 2024 Handmade Crafts-Craftopia
+        &copy; 2024 Handmade Crafts - Craftopia | 
+        <a href="https://www.instagram.com/craftopia08?igsh=M3kybDgxMGE4YjRp" target="_blank">Follow us on Instagram</a> | 
+        Contact us: +91-1234567890
+   
     </footer>
-    <script src="../js/script.js"></script>
-</body>
-
-</html>
+    </body>
+    </html>

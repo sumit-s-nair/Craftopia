@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Add New Product</h1>
+        <nav class="navbar">
+
+            <ul class="nav-list">
+            <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;
+            
+            <div class="tagline">
+                <h2 class="tagline">Welcome to Craftopia </h2>
+                <span id="typedText" class="typed-text"></span>
+            </div> &nbsp;         
+            <a href="../admin/admin-dashboard.html">Dashboard</a>
+            <a href="../admin/view-orders.html">View Orders</a>
+            <a href="../admin/view-customers.html">View Customers</a>
+            <a href="../pages/index.html">Logout</a>
+            </ul> <br>  
+    </header>
+    <main>
+        <form id="addProductForm">
+            <input type="text" placeholder="Product Name" required>
+            <input type="text" placeholder="Description" required>
+            <input type="number" placeholder="&#8377;" required>
+            <input type="file" accept="image/*" required>
+            <button type="submit">Add Product</button>
+        </form>
+    </main>
+    <footer>
+        &copy; 2024 Handmade Crafts - Craftopia | 
+        <a href="https://www.instagram.com/craftopia08?igsh=M3kybDgxMGE4YjRp" target="_blank">Follow us on Instagram</a> | 
+        Contact us: +91-1234567890
+   
+    </footer>
+</body>
+</html>
