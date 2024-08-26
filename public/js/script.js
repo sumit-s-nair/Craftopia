@@ -72,3 +72,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+//register page 
+document.getElementById('registrationForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // Retrieve the stored admin credentials from localStorage
+    const adminUsername = localStorage.getItem('adminUsername');
+    const adminEmail = localStorage.getItem('adminEmail');
+    const adminPassword = localStorage.getItem('adminPassword');
+
+    console.log("Stored Admin Username:", adminUsername);
+    console.log("Stored Admin Email:", adminEmail);
+    console.log("Stored Admin Password:", adminPassword);
+
+    // Check if the entered credentials match the admin credentials
+    if (username === adminUsername && email === adminEmail && password === adminPassword) {
+        // Redirect to the admin dashboard
+        window.location.href = "../admin/admin-dashboard.html";
+    } else {
+        // Otherwise, assume it's a regular user and redirect to the home page
+        window.location.href = "../pages/index.html";
+    }
+});
+//register page ended

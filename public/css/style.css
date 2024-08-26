@@ -472,69 +472,63 @@ footer p {
 }
 
 .Register {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
 }
 
-form {
+.Register form {
     display: flex;
     flex-direction: column;
 }
 
-label {
+.Register label {
     font-size: 14px;
-    color: #333;
     margin-bottom: 5px;
+    text-align: left;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 100%;
+.Register input[type="text"],
+.Register input[type="email"],
+.Register input[type="password"] {
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    box-sizing: border-box;
 }
 
-button {
+.Register button[type="submit"] {
     background-color: #ffa41c;
-    color: white;
+    color: #ffffff;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    padding: 10px;
-    font-size: 16px;
     cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #e99e20;
+.Register button[type="submit"]:hover {
+    background-color: #ff8c00;
 }
 
-#message {
+.additional-options {
     margin-top: 15px;
-    color: #d9534f; /* Error message color */
     font-size: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .Register {
-        padding: 15px;
-        max-width: 100%;
-    }
-    
-    button {
-        font-size: 14px;
-        padding: 8px;
-    }
+.additional-options a {
+    color: #007185;
+    text-decoration: none;
+}
+
+.additional-options a:hover {
+    text-decoration: underline;
 }
 
 form#Payment-Method {
