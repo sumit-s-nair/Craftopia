@@ -339,6 +339,227 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //payment.html ended
+// amdin-dashboard.html
+document.addEventListener('DOMContentLoaded', function () {
+    const welcomeMessage = document.querySelector('main h2');
+    const manageProductsLink = document.querySelector('nav a[href="../admin/add-product.html"]');
+    const viewOrdersLink = document.querySelector('nav a[href="../admin/view-orders.html"]');
+    const viewCustomersLink = document.querySelector('nav a[href="../admin/view-customers.html"]');
+
+   
+    welcomeMessage.textContent = `Welcome, Admin!`;
+
+    
+    manageProductsLink.title = 'Add new products to the inventory';
+    viewOrdersLink.title = 'View and manage all customer orders';
+    viewCustomersLink.title = 'View customer details and manage their accounts';
+
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000); 
+    }
+
+    
+    showNotification('Welcome to the Admin Dashboard!', 'info');
+});
+//admin-dashboard.html ended
+
+//add product.html
+document.addEventListener('DOMContentLoaded', function () {
+    const addProductForm = document.getElementById('addProductForm');
+    const productNameInput = addProductForm.querySelector('input[placeholder="Product Name"]');
+    const descriptionInput = addProductForm.querySelector('input[placeholder="Description"]');
+    const priceInput = addProductForm.querySelector('input[placeholder="₹"]');
+    const imageInput = addProductForm.querySelector('input[type="file"]');
+    const videoInput = document.getElementById('videoUpload');
+
+    
+    function validateForm() {
+        const name = productNameInput.value.trim();
+        const description = descriptionInput.value.trim();
+        const price = priceInput.value.trim();
+        const image = imageInput.files[0];
+        const video = videoInput.files[0];
+
+        if (!name || !description || !price || !image) {
+            alert('Please fill out all required fields and upload an image.');
+            return false;
+        }
+
+        if (video && video.size > 5 * 1024 * 1024) { // 5 MB limit for video files
+            alert('Video file size should be less than 5 MB.');
+            return false;
+        }
+
+        return true;
+    }
+
+    
+    function previewImage() {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imagePreview = document.createElement('img');
+                imagePreview.src = e.target.result;
+                imagePreview.style.maxWidth = '200px';
+                imagePreview.style.marginTop = '10px';
+                imagePreview.id = 'imagePreview';
+
+                const existingPreview = document.getElementById('imagePreview');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                
+                addProductForm.appendChild(imagePreview);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+   
+    function previewVideo() {
+        const file = videoInput.files[0];
+        if (file) {
+            const videoPreview = document.createElement('video');
+            videoPreview.controls = true;
+            videoPreview.style.maxWidth = '300px';
+            videoPreview.style.marginTop = '10px';
+            videoPreview.id = 'videoPreview';
+
+            const videoSource = document.createElement('source');
+            videoSource.src = URL.createObjectURL(file);
+            videoSource.type = file.type;
+
+            videoPreview.appendChild(videoSource);
+
+            const existingPreview = document.getElementById('videoPreview');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+
+            addProductForm.appendChild(videoPreview);
+        }
+    }
+
+    
+    imageInput.addEventListener('change', previewImage);
+    videoInput.addEventListener('change', previewVideo);
+
+    addProductForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (validateForm()) {
+            
+            alert('Product added successfully!');
+            addProductForm.reset(); 
+            const imagePreview = document.getElementById('imagePreview');
+            const videoPreview = document.getElementById('videoPreview');
+            if (imagePreview) {
+                imagePreview.remove(); 
+            }
+            if (videoPreview) {
+                videoPreview.remove(); 
+            }
+        }
+    });
+});
+//add product.html ended
+//view-customers.html
+document.addEventListener('DOMContentLoaded', function () {
+    // Example customer data (in a real application, this would come from a database)
+    const customers = [
+        { name: 'Alice Johnson', email: 'alice@example.com', totalOrders: 12 },
+        { name: 'Bob Smith', email: 'bob@example.com', totalOrders: 7 },
+        { name: 'Charlie Brown', email: 'charlie@example.com', totalOrders: 5 }
+    ];
+
+    const mainSection = document.querySelector('main');
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search Customers';
+    searchInput.id = 'searchInput';
+    mainSection.insertBefore(searchInput, mainSection.firstChild);
+
+    function renderCustomers(customerList) {
+        mainSection.querySelectorAll('.customer').forEach(cust => cust.remove()); 
+
+        customerList.forEach(customer => {
+            const customerDiv = document.createElement('div');
+            customerDiv.className = 'customer';
+            customerDiv.innerHTML = `
+                <h3>${customer.name}</h3>
+                <p>Email: ${customer.email}</p>
+                <p>Total Orders: ${customer.totalOrders}</p>
+            `;
+            mainSection.appendChild(customerDiv);
+        });
+    }
+
+    
+    renderCustomers(customers);
+
+   
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.toLowerCase();
+        const filteredCustomers = customers.filter(customer =>
+            customer.name.toLowerCase().includes(query) || 
+            customer.email.toLowerCase().includes(query)
+        );
+        renderCustomers(filteredCustomers);
+    });
+});
+//view-customers.html ended
+//view-orders.html
+document.addEventListener('DOMContentLoaded', function () {
+    // Example order data (in a real application, this would come from a database)
+    const orders = [
+        { id: '001', customerName: 'Alice Johnson', totalAmount: '₹1500', details: 'Order placed on 2024-08-25' },
+        { id: '002', customerName: 'Bob Smith', totalAmount: '₹800', details: 'Order placed on 2024-08-24' },
+        { id: '003', customerName: 'Charlie Brown', totalAmount: '₹1200', details: 'Order placed on 2024-08-23' }
+    ];
+
+    const tableBody = document.querySelector('#view-orders tbody');
+
+    function renderOrders(orderList) {
+        tableBody.innerHTML = ''; 
+
+        orderList.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.customerName}</td>
+                <td>${order.totalAmount}</td>
+                <td><button class="details-btn" data-id="${order.id}">View Details</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Initial render of all orders
+    renderOrders(orders);
+
+    // Event delegation for details button
+    tableBody.addEventListener('click', function (event) {
+        if (event.target.classList.contains('details-btn')) {
+            const orderId = event.target.getAttribute('data-id');
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                alert(`Order Details:\n\nID: ${order.id}\nCustomer Name: ${order.customerName}\nTotal Amount: ${order.totalAmount}\nDetails: ${order.details}`);
+            }
+        }
+    });
+});
+//view-orders.html ended
+
+
 
 
 
