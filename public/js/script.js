@@ -72,9 +72,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+//signup.html
+document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
 
+    var usernameInput = document.getElementById('username');
+    var emailInput = document.getElementById('email');
+    var passwordInput = document.getElementById('password');
+    var confirmPasswordInput = document.getElementById('confirm-password');
+    var messageElement = document.getElementById('message');
+
+    // Clear previous messages
+    messageElement.textContent = '';
+
+    // Basic validation
+    if (!validateEmail(emailInput.value)) {
+        messageElement.textContent = 'Please enter a valid email address.';
+        messageElement.style.color = 'red';
+        return;
+    }
+
+    if (passwordInput.value.length < 8) {
+        messageElement.textContent = 'Password must be at least 8 characters long.';
+        messageElement.style.color = 'red';
+        return;
+    }
+
+    if (passwordInput.value !== confirmPasswordInput.value) {
+        messageElement.textContent = 'Passwords do not match. Please try again.';
+        messageElement.style.color = 'red';
+        return;
+    }
+
+    // If all validations pass, simulate successful signup
+    messageElement.textContent = 'Sign up successful! Welcome, ' + usernameInput.value + '!';
+    messageElement.style.color = 'green';
+
+    // Reset form fields
+    usernameInput.value = '';
+    emailInput.value = '';
+    passwordInput.value = '';
+    confirmPasswordInput.value = '';
+});
+//signup.html ended
 //register page 
-
 localStorage.setItem('adminUsername', 'Jainee Shah');
 localStorage.setItem('adminEmail', 'jaineeshah@gmail.com');
 localStorage.setItem('adminPassword', 'jainee@123');
@@ -110,12 +151,38 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     }
 });
 //register page ended
+//forgot password 
+document.getElementById('forgotPasswordForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var emailInput = document.getElementById('email');
+    var email = emailInput.value;
+    var messageElement = document.getElementById('message');
+
+    if (validateEmail(email)) {
+        // Simulate sending reset password link
+        messageElement.textContent = 'A reset password link has been sent to ' + email + '.';
+        messageElement.style.color = 'green';
+    } else {
+        // Display error message
+        messageElement.textContent = 'Please enter a valid email address.';
+        messageElement.style.color = 'red';
+    }
+});
+
+// Function to validate email
+function validateEmail(email) {
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
+//forgot password ended
+
 // cart.html 
 // Example cart data - replace with real data or fetch from your backend
 const cartItems = [
     { id: 1, name: "Resin Frame", price: 500, quantity: 1, customization: "" },
-    { id: 2, name: "Vintage Frame", price: 800, quantity: 2, customization: "" },
-    { id: 3, name: "Scrapbook", price: 1000, quantity: 1, customization: "" }
+    { id: 2, name: "Vintage Frame", price: 400, quantity: 2, customization: "" },
+    { id: 3, name: "Scrapbook", price: 250, quantity: 1, customization: "" }
 ];
 
 function renderCart() {
@@ -123,7 +190,7 @@ function renderCart() {
     const totalAmountEl = document.getElementById("total-amount");
     let totalAmount = 0;
 
-    cartTableBody.innerHTML = ""; // Clear existing rows
+    cartTableBody.innerHTML = ""; 
 
     cartItems.forEach((item, index) => {
         const row = document.createElement("tr");
@@ -161,7 +228,7 @@ function removeCartItem(index) {
     renderCart();
 }
 
-// Event Listeners
+
 document.querySelector("#cart").addEventListener("input", (e) => {
     const index = e.target.dataset.index;
 
@@ -181,8 +248,97 @@ document.querySelector("#cart").addEventListener("click", (e) => {
     }
 });
 
-// Initialize cart on page load
 renderCart();
+//cart.html ended
+
+//order.html
+
+function calculateTotal() {
+    let totalAmount = 0;
+    cartItems.forEach(item => {
+        totalAmount += item.quantity * item.price;
+    });
+    return totalAmount;
+}
+
+
+function generateOrderSummary() {
+    const orderTableBody = document.querySelector('#order-table tbody');
+    orderTableBody.innerHTML = ''; 
+
+    cartItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.product}</td>
+            <td>${item.quantity}</td>
+            <td>&#8377;${item.price.toFixed(2)}</td>
+            <td>&#8377;${(item.quantity * item.price).toFixed(2)}</td>
+        `;
+        orderTableBody.appendChild(row);
+    });
+
+    
+    document.getElementById('total-amount').textContent = calculateTotal().toFixed(2);
+}
+
+
+document.getElementById('order-form').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    const name = document.getElementById('name').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    
+    if (name === '' || address === '' || phone === '') {
+        alert('Please fill in all the fields.');
+        return;
+    }
+
+    alert('Order placed successfully!');
+    window.location.href = '../pages/payment.html';
+});
+
+generateOrderSummary();
+//order.html ended
+
+//payment.html 
+document.addEventListener('DOMContentLoaded', function () {
+    const paymentForm = document.getElementById('Payment-Method');
+    const paymentMethodSelect = document.getElementById('Payment');
+    const orderConfirmation = document.getElementById('order-confirmation');
+
+    paymentForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const selectedPaymentMethod = paymentMethodSelect.value;
+
+        
+        if (selectedPaymentMethod === 'cod') {
+            alert('Cash on Delivery selected. You can pay when the product is delivered.');
+        } else if (selectedPaymentMethod === 'upi') {
+            const upiId = prompt('Please enter your UPI ID for payment:');
+            if (upiId) {
+                alert('UPI payment initiated. Please approve the transaction.');
+            } else {
+                alert('UPI payment canceled.');
+                return;
+            }
+        } else if (selectedPaymentMethod === 'card') {
+            const cardNumber = prompt('Please enter your Credit/Debit Card number:');
+            if (cardNumber) {
+                alert('Card payment processing...');
+            } else {
+                alert('Card payment canceled.');
+                return;
+            }
+        }
+
+        paymentForm.classList.add('hidden');
+        orderConfirmation.classList.remove('hidden');
+    });
+});
+//payment.html ended
 
 
 
