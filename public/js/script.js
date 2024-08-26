@@ -401,7 +401,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    
     function previewImage() {
         const file = imageInput.files[0];
         if (file) {
@@ -424,7 +423,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-   
     function previewVideo() {
         const file = videoInput.files[0];
         if (file) {
@@ -448,8 +446,6 @@ document.addEventListener('DOMContentLoaded', function () {
             addProductForm.appendChild(videoPreview);
         }
     }
-
-    
     imageInput.addEventListener('change', previewImage);
     videoInput.addEventListener('change', previewVideo);
 
@@ -542,10 +538,8 @@ document.addEventListener('DOMContentLoaded', function () {
             tableBody.appendChild(row);
         });
     }
-
     // Initial render of all orders
     renderOrders(orders);
-
     // Event delegation for details button
     tableBody.addEventListener('click', function (event) {
         if (event.target.classList.contains('details-btn')) {
@@ -558,8 +552,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //view-orders.html ended
-
-
-
-
-
