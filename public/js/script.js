@@ -74,12 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //register page 
-// Store the admin credentials in localStorage (this should be done once, not repeatedly)
+
 localStorage.setItem('adminUsername', 'Jainee Shah');
 localStorage.setItem('adminEmail', 'jaineeshah@gmail.com');
 localStorage.setItem('adminPassword', 'jainee@123');
 
-// Add event listener for form submission
 document.getElementById('registrationForm').addEventListener('submit', function(event) {
     event.preventDefault(); 
 
@@ -87,12 +86,11 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     const email = document.getElementById('email').value.trim(); 
     const password = document.getElementById('password').value.trim();
 
-    // Retrieve the stored admin credentials from localStorage
     const adminUsername = localStorage.getItem('adminUsername');
     const adminEmail = localStorage.getItem('adminEmail');
     const adminPassword = localStorage.getItem('adminPassword');
 
-    // Debugging output
+  
     console.log('Entered Username:', `"${username}"`);
     console.log('Stored Admin Username:', `"${adminUsername}"`);
     console.log('Entered Email:', `"${email}"`);
@@ -100,17 +98,91 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     console.log('Entered Password:', `"${password}"`);
     console.log('Stored Admin Password:', `"${adminPassword}"`);
 
-    // Check if the entered credentials match the admin credentials
+   
     if (username === adminUsername && email === adminEmail && password === adminPassword) {
         console.log('Admin credentials matched. Redirecting to admin dashboard.');
-        // Redirect to the admin dashboard
+      
         window.location.href = "../admin/admin-dashboard.html";
     } else {
         console.log('Credentials do not match admin. Redirecting to home page.');
-        // Otherwise, assume it's a regular user and redirect to the home page
+       
         window.location.href = "../pages/index.html";
     }
 });
-
-
 //register page ended
+// cart.html 
+// Example cart data - replace with real data or fetch from your backend
+const cartItems = [
+    { id: 1, name: "Resin Frame", price: 500, quantity: 1, customization: "" },
+    { id: 2, name: "Vintage Frame", price: 800, quantity: 2, customization: "" },
+    { id: 3, name: "Scrapbook", price: 1000, quantity: 1, customization: "" }
+];
+
+function renderCart() {
+    const cartTableBody = document.querySelector("#cart tbody");
+    const totalAmountEl = document.getElementById("total-amount");
+    let totalAmount = 0;
+
+    cartTableBody.innerHTML = ""; // Clear existing rows
+
+    cartItems.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const itemTotal = item.price * item.quantity;
+        totalAmount += itemTotal;
+
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>₹${item.price}</td>
+            <td>
+                <input type="number" value="${item.quantity}" min="1" class="quantity" data-index="${index}">
+            </td>
+            <td>
+                <input type="text" placeholder="Enter customizations" value="${item.customization}" class="customization" data-index="${index}">
+            </td>
+            <td>₹<span class="item-total">${itemTotal}</span></td>
+            <td><button class="remove-btn" data-index="${index}">Remove</button></td>
+        `;
+
+        cartTableBody.appendChild(row);
+    });
+
+    totalAmountEl.textContent = totalAmount;
+}
+
+function updateCartItem(index, quantity, customization) {
+    cartItems[index].quantity = quantity;
+    cartItems[index].customization = customization;
+    renderCart();
+}
+
+function removeCartItem(index) {
+    cartItems.splice(index, 1);
+    renderCart();
+}
+
+// Event Listeners
+document.querySelector("#cart").addEventListener("input", (e) => {
+    const index = e.target.dataset.index;
+
+    if (e.target.classList.contains("quantity")) {
+        const quantity = parseInt(e.target.value, 10);
+        updateCartItem(index, quantity, cartItems[index].customization);
+    } else if (e.target.classList.contains("customization")) {
+        const customization = e.target.value;
+        updateCartItem(index, cartItems[index].quantity, customization);
+    }
+});
+
+document.querySelector("#cart").addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+        const index = e.target.dataset.index;
+        removeCartItem(index);
+    }
+});
+
+// Initialize cart on page load
+renderCart();
+
+
+
