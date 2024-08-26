@@ -74,12 +74,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //register page 
-document.getElementById('registrationForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the form from submitting normally
+// Store the admin credentials in localStorage (this should be done once, not repeatedly)
+localStorage.setItem('adminUsername', 'Jainee Shah');
+localStorage.setItem('adminEmail', 'jaineeshah@gmail.com');
+localStorage.setItem('adminPassword', 'jainee@123');
 
-    const username = document.getElementById('username').value.trim(); // Remove leading/trailing whitespace
-    const email = document.getElementById('email').value.trim(); // Remove leading/trailing whitespace
-    const password = document.getElementById('password').value.trim(); // Remove leading/trailing whitespace
+// Add event listener for form submission
+document.getElementById('registrationForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    const username = document.getElementById('username').value.trim(); 
+    const email = document.getElementById('email').value.trim(); 
+    const password = document.getElementById('password').value.trim();
 
     // Retrieve the stored admin credentials from localStorage
     const adminUsername = localStorage.getItem('adminUsername');
@@ -105,4 +111,6 @@ document.getElementById('registrationForm').addEventListener('submit', function(
         window.location.href = "../pages/index.html";
     }
 });
+
+
 //register page ended
