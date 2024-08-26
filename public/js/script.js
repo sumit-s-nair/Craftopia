@@ -77,21 +77,30 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('registrationForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting normally
 
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim(); // Remove leading/trailing whitespace
+    const email = document.getElementById('email').value.trim(); // Remove leading/trailing whitespace
+    const password = document.getElementById('password').value.trim(); // Remove leading/trailing whitespace
 
     // Retrieve the stored admin credentials from localStorage
     const adminUsername = localStorage.getItem('adminUsername');
     const adminEmail = localStorage.getItem('adminEmail');
     const adminPassword = localStorage.getItem('adminPassword');
 
+    // Debugging output
+    console.log('Entered Username:', `"${username}"`);
+    console.log('Stored Admin Username:', `"${adminUsername}"`);
+    console.log('Entered Email:', `"${email}"`);
+    console.log('Stored Admin Email:', `"${adminEmail}"`);
+    console.log('Entered Password:', `"${password}"`);
+    console.log('Stored Admin Password:', `"${adminPassword}"`);
 
     // Check if the entered credentials match the admin credentials
     if (username === adminUsername && email === adminEmail && password === adminPassword) {
+        console.log('Admin credentials matched. Redirecting to admin dashboard.');
         // Redirect to the admin dashboard
         window.location.href = "../admin/admin-dashboard.html";
     } else {
+        console.log('Credentials do not match admin. Redirecting to home page.');
         // Otherwise, assume it's a regular user and redirect to the home page
         window.location.href = "../pages/index.html";
     }
