@@ -86,9 +86,6 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     const adminEmail = localStorage.getItem('adminEmail');
     const adminPassword = localStorage.getItem('adminPassword');
 
-    console.log("Stored Admin Username:", adminUsername);
-    console.log("Stored Admin Email:", adminEmail);
-    console.log("Stored Admin Password:", adminPassword);
 
     // Check if the entered credentials match the admin credentials
     if (username === adminUsername && email === adminEmail && password === adminPassword) {
