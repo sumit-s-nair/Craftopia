@@ -216,163 +216,110 @@ document.querySelectorAll('.product button').forEach(button => {
 //product.html ended
 
 // cart.html 
+document.addEventListener('DOMContentLoaded', () => {
+    loadCartItems();
+    updateCartSummary();
+
+    // Handle form submission
+    document.getElementById('order-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        saveOrderDetails();
+        window.location.href = '../pages/payment.html'; // Redirect to payment.html
+    });
+});
+
 function loadCartItems() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     const cartTableBody = document.querySelector('#cart tbody');
-    const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-    let totalAmount = 0;
-
-    
-    cartTableBody.innerHTML = '';
-
-    
-    storedCartItems.forEach((item, index) => {
+    cartItems.forEach((item, index) => {
         const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td>${item.name} - ${item.size}</td>
-            <td>&#8377;${item.price}</td>
-            <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="quantity-input"></td>
-            <td><input type="text" placeholder="Enter customizations" class="customization-input" data-index="${index}"></td>
-            <td>&#8377;<span class="item-total">${item.price * item.quantity}</span></td>
-            <td><button data-index="${index}" class="remove-btn">Remove</button></td>
+            <td>${item.name}</td>
+            <td>₹${item.price}</td>
+            <td>${item.quantity}</td>
+            <td>${item.customization}</td>
+            <td>₹${item.price * item.quantity}</td>
+            <td><button onclick="removeCartItem(${index})">Remove</button></td>
         `;
 
         cartTableBody.appendChild(row);
+    });
+}
 
+function updateCartSummary() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    let totalAmount = 0;
+
+    cartItems.forEach(item => {
         totalAmount += item.price * item.quantity;
     });
 
-    
     document.getElementById('total-amount').textContent = totalAmount;
-
-    
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', removeCartItem);
-    });
-
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        input.addEventListener('change', updateQuantity);
-    });
 }
 
-
-function removeCartItem(event) {
-    const index = event.target.dataset.index;
+function removeCartItem(index) {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     cartItems.splice(index, 1);
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    loadCartItems();
+    location.reload(); // Reload to update cart items and summary
 }
 
+function saveOrderDetails() {
+    const name = document.getElementById('name').value;
+    const address = document.getElementById('address').value;
+    const phone = document.getElementById('phone').value;
 
-function updateQuantity(event) {
-    const index = event.target.dataset.index;
-    const newQuantity = parseInt(event.target.value);
-    cartItems[index].quantity = newQuantity;
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    loadCartItems();
+    // You can save these details to local storage or send them to a server here
+    const orderDetails = {
+        name: name,
+        address: address,
+        phone: phone,
+        date: new Date().toISOString(),
+    };
+
+    localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
 }
-
-document.addEventListener('DOMContentLoaded', loadCartItems);
 //cart.html ended
 
 //order.html
 document.addEventListener('DOMContentLoaded', () => {
-    loadOrderSummary();
-    loadShipmentTracking();
-
-    // Handle order form submission
-    const orderForm = document.getElementById('order-form');
-    orderForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const name = document.getElementById('name').value;
-        const address = document.getElementById('address').value;
-        const phone = document.getElementById('phone').value;
-
-        if (storedCartItems.length > 0) {
-            // Save order items to local storage for tracking
-            const orderId = generateOrderId();
-            saveOrderItems(storedCartItems, orderId);
-
-            // Update shipment tracking
-            updateShipmentTracking(storedCartItems, orderId);
-
-            // Clear cart items from local storage
-            localStorage.removeItem('cartItems');
-
-            // Redirect to payment page or show confirmation
-            window.location.href = 'payment.html';
-        } else {
-            alert('Your cart is empty. Please add items to your cart before placing an order.');
-        }
-    });
+    displayOrders();
 });
 
-function loadOrderSummary() {
-    const orderTableBody = document.querySelector('#order-table tbody');
-    const totalAmountEl = document.getElementById('total-amount');
-    let totalAmount = 0;
+function displayOrders() {
+    const ordersTableBody = document.querySelector('#orders-table tbody');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    orderTableBody.innerHTML = '';
+    ordersTableBody.innerHTML = '';
 
-    storedCartItems.forEach(item => {
+    orders.forEach((order, index) => {
         const row = document.createElement('tr');
+
         row.innerHTML = `
-            <td>${item.name} - ${item.size}</td>
-            <td>&#8377;${item.price}</td>
-            <td>${item.quantity}</td>
-            <td>&#8377;${item.price * item.quantity}</td>
+            <td>${index + 1}</td>
+            <td>${order.date}</td>
+            <td>₹${order.totalAmount}</td>
+            <td>${order.status}</td>
+            <td><button onclick="trackOrder(${index})">Track</button></td>
         `;
-        totalAmount += item.price * item.quantity;
-        orderTableBody.appendChild(row);
-    });
 
-    totalAmountEl.textContent = totalAmount.toFixed(2);
-}
-
-function loadShipmentTracking() {
-    const trackingTableBody = document.querySelector('#tracking-table tbody');
-    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
-
-    trackingTableBody.innerHTML = '';
-
-    storedShipmentTracking.forEach(info => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${info.orderId}</td>
-            <td>${info.product}</td>
-            <td>${info.status}</td>
-        `;
-        trackingTableBody.appendChild(row);
+        ordersTableBody.appendChild(row);
     });
 }
 
-function saveOrderItems(orderItems, orderId) {
-    const storedOrderItems = JSON.parse(localStorage.getItem('orderItems')) || [];
-    orderItems.forEach(item => {
-        item.orderId = orderId;
-        storedOrderItems.push(item);
-    });
-    localStorage.setItem('orderItems', JSON.stringify(storedOrderItems));
+function trackOrder(index) {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const order = orders[index];
+
+    if (order) {
+        alert(`Tracking Details:\nOrder ID: ${index + 1}\nStatus: ${order.status}\nEstimated Delivery: ${order.estimatedDelivery}`);
+    } else {
+        alert('Order not found');
+    }
 }
 
-function updateShipmentTracking(orderItems, orderId) {
-    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
-    orderItems.forEach(item => {
-        const trackingInfo = {
-            orderId: orderId,
-            product: item.name,
-            status: 'Processing'  // Default status, can be updated later
-        };
-        storedShipmentTracking.push(trackingInfo);
-    });
-    localStorage.setItem('shipmentTracking', JSON.stringify(storedShipmentTracking));
-}
-
-function generateOrderId() {
-    return 'ORD' + Math.floor(Math.random() * 100000);
-}
 //order.html ended
 
 //payment.html 
@@ -692,3 +639,4 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 
 //admin chat and user chat ended
+ 
