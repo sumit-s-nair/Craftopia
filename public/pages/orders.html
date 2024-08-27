@@ -80,6 +80,23 @@
                 <button type="submit">Place Order</button>
             </form>
         </div>
+        <div id="shipment-tracking">
+            <h2>Shipment Tracking</h2>
+            <table id="tracking-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Product</th>
+                        <th>Shipment Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Shipment tracking details will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+
     </main>
     <footer>
         &copy; 2024 Handmade Crafts - Craftopia | 
@@ -87,11 +104,7 @@
         Contact us: +91-1234567890
    
     </footer>
-    <script>
-        document.getElementById('confirmOrderBtn').addEventListener('click', function() {
-            window.location.href = '../pages/payment.html'; // Redirect to payment page
-        });
-    </script>
+    
      <script src="../js/script.js"></script>
 </body>
 </html>

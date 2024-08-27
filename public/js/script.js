@@ -277,46 +277,102 @@ document.addEventListener('DOMContentLoaded', loadCartItems);
 //cart.html ended
 
 //order.html
+document.addEventListener('DOMContentLoaded', () => {
+    loadOrderSummary();
+    loadShipmentTracking();
 
-function loadOrderItems() {
-    const orderTableBody = document.querySelector('#order-table tbody');
-    const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    // Handle order form submission
+    const orderForm = document.getElementById('order-form');
+    orderForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    let totalAmount = 0;
+        const name = document.getElementById('name').value;
+        const address = document.getElementById('address').value;
+        const phone = document.getElementById('phone').value;
 
-   
-    orderTableBody.innerHTML = '';
+        if (storedCartItems.length > 0) {
+            // Save order items to local storage for tracking
+            const orderId = generateOrderId();
+            saveOrderItems(storedCartItems, orderId);
 
-   
-    storedCartItems.forEach(item => {
-        const row = document.createElement('tr');
+            // Update shipment tracking
+            updateShipmentTracking(storedCartItems, orderId);
 
-        row.innerHTML = `
-            <td>${item.name} - ${item.size}</td>
-            <td>${item.quantity}</td>
-            <td>&#8377;${item.price}</td>
-            <td>&#8377;${item.price * item.quantity}</td>
-        `;
+            // Clear cart items from local storage
+            localStorage.removeItem('cartItems');
 
-        orderTableBody.appendChild(row);
-
-        totalAmount += item.price * item.quantity;
+            // Redirect to payment page or show confirmation
+            window.location.href = 'payment.html';
+        } else {
+            alert('Your cart is empty. Please add items to your cart before placing an order.');
+        }
     });
-
-   
-    document.getElementById('total-amount').textContent = totalAmount;
-}
-
-
-document.getElementById('order-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    
-    window.location.href = 'payment.html';
 });
 
+function loadOrderSummary() {
+    const orderTableBody = document.querySelector('#order-table tbody');
+    const totalAmountEl = document.getElementById('total-amount');
+    let totalAmount = 0;
 
-document.addEventListener('DOMContentLoaded', loadOrderItems);
+    orderTableBody.innerHTML = '';
+
+    storedCartItems.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name} - ${item.size}</td>
+            <td>&#8377;${item.price}</td>
+            <td>${item.quantity}</td>
+            <td>&#8377;${item.price * item.quantity}</td>
+        `;
+        totalAmount += item.price * item.quantity;
+        orderTableBody.appendChild(row);
+    });
+
+    totalAmountEl.textContent = totalAmount.toFixed(2);
+}
+
+function loadShipmentTracking() {
+    const trackingTableBody = document.querySelector('#tracking-table tbody');
+    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
+
+    trackingTableBody.innerHTML = '';
+
+    storedShipmentTracking.forEach(info => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${info.orderId}</td>
+            <td>${info.product}</td>
+            <td>${info.status}</td>
+        `;
+        trackingTableBody.appendChild(row);
+    });
+}
+
+function saveOrderItems(orderItems, orderId) {
+    const storedOrderItems = JSON.parse(localStorage.getItem('orderItems')) || [];
+    orderItems.forEach(item => {
+        item.orderId = orderId;
+        storedOrderItems.push(item);
+    });
+    localStorage.setItem('orderItems', JSON.stringify(storedOrderItems));
+}
+
+function updateShipmentTracking(orderItems, orderId) {
+    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
+    orderItems.forEach(item => {
+        const trackingInfo = {
+            orderId: orderId,
+            product: item.name,
+            status: 'Processing'  // Default status, can be updated later
+        };
+        storedShipmentTracking.push(trackingInfo);
+    });
+    localStorage.setItem('shipmentTracking', JSON.stringify(storedShipmentTracking));
+}
+
+function generateOrderId() {
+    return 'ORD' + Math.floor(Math.random() * 100000);
+}
 //order.html ended
 
 //payment.html 
@@ -511,86 +567,56 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 //add product.html ended
 //view-customers.html
-document.addEventListener('DOMContentLoaded', function () {
-    // Example customer data (in a real application, this would come from a database)
-    const customers = [
-        { name: 'Alice Johnson', email: 'alice@example.com', totalOrders: 12 },
-        { name: 'Bob Smith', email: 'bob@example.com', totalOrders: 7 },
-        { name: 'Charlie Brown', email: 'charlie@example.com', totalOrders: 5 }
-    ];
+document.addEventListener('DOMContentLoaded', function() {
+    const customersTableBody = document.querySelector('#view-customers tbody');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    const mainSection = document.querySelector('main');
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Search Customers';
-    searchInput.id = 'searchInput';
-    mainSection.insertBefore(searchInput, mainSection.firstChild);
+    const customers = {};
 
-    function renderCustomers(customerList) {
-        mainSection.querySelectorAll('.customer').forEach(cust => cust.remove()); 
+    orders.forEach(order => {
+        if (!customers[order.phone]) {
+            customers[order.phone] = {
+                customerID: order.orderID, // Using orderID as a proxy for customer ID
+                name: order.customerName,
+                email: order.email || "N/A", // Assuming you store email, otherwise add an email field in order data
+                phone: order.phone,
+                address: order.address
+            };
+        }
+    });
 
-        customerList.forEach(customer => {
-            const customerDiv = document.createElement('div');
-            customerDiv.className = 'customer';
-            customerDiv.innerHTML = `
-                <h3>${customer.name}</h3>
-                <p>Email: ${customer.email}</p>
-                <p>Total Orders: ${customer.totalOrders}</p>
-            `;
-            mainSection.appendChild(customerDiv);
-        });
-    }
-
-    
-    renderCustomers(customers);
-
-   
-    searchInput.addEventListener('input', function () {
-        const query = searchInput.value.toLowerCase();
-        const filteredCustomers = customers.filter(customer =>
-            customer.name.toLowerCase().includes(query) || 
-            customer.email.toLowerCase().includes(query)
-        );
-        renderCustomers(filteredCustomers);
+    Object.values(customers).forEach(customer => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${customer.customerID}</td>
+            <td>${customer.name}</td>
+            <td>${customer.email}</td>
+            <td>${customer.phone}</td>
+            <td>${customer.address}</td>
+        `;
+        customersTableBody.appendChild(row);
     });
 });
 //view-customers.html ended
 //view-orders.html
-document.addEventListener('DOMContentLoaded', function () {
-    // Example order data (in a real application, this would come from a database)
-    const orders = [
-        { id: '001', customerName: 'Alice Johnson', totalAmount: '₹1500', details: 'Order placed on 2024-08-25' },
-        { id: '002', customerName: 'Bob Smith', totalAmount: '₹800', details: 'Order placed on 2024-08-24' },
-        { id: '003', customerName: 'Charlie Brown', totalAmount: '₹1200', details: 'Order placed on 2024-08-23' }
-    ];
+document.addEventListener('DOMContentLoaded', function() {
+    const ordersTableBody = document.querySelector('#view-orders tbody');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    const tableBody = document.querySelector('#view-orders tbody');
+    ordersTableBody.innerHTML = '';
 
-    function renderOrders(orderList) {
-        tableBody.innerHTML = ''; 
-
-        orderList.forEach(order => {
+    orders.forEach(order => {
+        order.items.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${order.id}</td>
+                <td>${order.orderID}</td>
                 <td>${order.customerName}</td>
-                <td>${order.totalAmount}</td>
-                <td><button class="details-btn" data-id="${order.id}">View Details</button></td>
+                <td>${item.name} - ${item.size}</td>
+                <td>${item.customization || "None"}</td>
+                <td>&#8377;${item.price * item.quantity}</td>
             `;
-            tableBody.appendChild(row);
+            ordersTableBody.appendChild(row);
         });
-    }
-   
-    renderOrders(orders);
-    
-    tableBody.addEventListener('click', function (event) {
-        if (event.target.classList.contains('details-btn')) {
-            const orderId = event.target.getAttribute('data-id');
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                alert(`Order Details:\n\nID: ${order.id}\nCustomer Name: ${order.customerName}\nTotal Amount: ${order.totalAmount}\nDetails: ${order.details}`);
-            }
-        }
     });
 });
 //view-orders.html ended
@@ -612,3 +638,57 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('total-balance').textContent = totalBalance.toFixed(2);
 });
 // admin payment.html ended
+//admin chat and user chat 
+q
+// Import and configure Firebase
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Reference to the database
+const database = firebase.database();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const chatBox = document.getElementById('chat-box');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    // Reference to the chat messages in Firebase
+    const chatRef = database.ref('chats');
+
+    // Load existing messages
+    chatRef.on('child_added', function(snapshot) {
+        const message = snapshot.val();
+        chatBox.innerHTML += `<p><strong>${message.sender}:</strong> ${message.text}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight; 
+    });
+
+    // Handle send button click
+    sendButton.addEventListener('click', function() {
+        const messageText = messageInput.value.trim();
+        if (messageText) {
+            const sender = document.body.classList.contains('admin') ? 'Admin' : 'Customer';
+            chatRef.push({ sender, text: messageText });
+            messageInput.value = '';
+        }
+    });
+});
+
+// Ensure user is logged in
+firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) {
+        window.location.href = 'register.html'; // Redirect to login if not authenticated
+    }
+});
+
+
+//admin chat and user chat ended

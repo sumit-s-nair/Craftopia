@@ -17,3 +17,11 @@
     "nodemon": "^3.1.4"
   }
 }
+{
+  "rules": {
+    "chats": {
+      ".read": "auth != null",  // Authenticated users can read
+      ".write": "auth != null"  // Authenticated users can write
+    }
+  }
+}
