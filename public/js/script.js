@@ -216,71 +216,95 @@ document.querySelectorAll('.product button').forEach(button => {
 //product.html ended
 
 // cart.html 
-document.addEventListener('DOMContentLoaded', () => {
-    loadCartItems();
-    updateCartSummary();
-
-    // Handle form submission
-    document.getElementById('order-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        saveOrderDetails();
-        window.location.href = '../pages/payment.html'; // Redirect to payment.html
-    });
-});
-
-function loadCartItems() {
+document.addEventListener('DOMContentLoaded', function() {
     const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     const cartTableBody = document.querySelector('#cart tbody');
+    const totalAmountElement = document.getElementById('total-amount');
 
-    cartItems.forEach((item, index) => {
-        const row = document.createElement('tr');
+    function updateCart() {
+        cartTableBody.innerHTML = '';
+        let totalAmount = 0;
 
-        row.innerHTML = `
-            <td>${item.name}</td>
-            <td>₹${item.price}</td>
-            <td>${item.quantity}</td>
-            <td>${item.customization}</td>
-            <td>₹${item.price * item.quantity}</td>
-            <td><button onclick="removeCartItem(${index})">Remove</button></td>
-        `;
+        cartItems.forEach((item, index) => {
+            const row = document.createElement('tr');
 
-        cartTableBody.appendChild(row);
+            // Product name
+            const productNameCell = document.createElement('td');
+            productNameCell.textContent = item.product;
+            row.appendChild(productNameCell);
+
+            // Price
+            const priceCell = document.createElement('td');
+            priceCell.textContent = `₹${item.price}`;
+            row.appendChild(priceCell);
+
+            // Quantity
+            const quantityCell = document.createElement('td');
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.value = item.quantity;
+            quantityInput.min = 1;
+            quantityInput.addEventListener('change', () => updateQuantity(index, quantityInput.value));
+            quantityCell.appendChild(quantityInput);
+            row.appendChild(quantityCell);
+
+            // Customization
+            const customizationCell = document.createElement('td');
+            const customizationInput = document.createElement('input');
+            customizationInput.type = 'text';
+            customizationInput.value = item.customization || '';
+            customizationInput.placeholder = 'Enter customization details';
+            customizationInput.addEventListener('input', () => updateCustomization(index, customizationInput.value));
+            customizationCell.appendChild(customizationInput);
+            row.appendChild(customizationCell);
+
+            // Total
+            const totalCell = document.createElement('td');
+            const itemTotal = item.price * item.quantity;
+            totalCell.textContent = `₹${itemTotal}`;
+            row.appendChild(totalCell);
+
+            // Remove button
+            const removeCell = document.createElement('td');
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => removeItem(index));
+            removeCell.appendChild(removeButton);
+            row.appendChild(removeCell);
+
+            cartTableBody.appendChild(row);
+
+            totalAmount += itemTotal;
+        });
+
+        totalAmountElement.textContent = totalAmount;
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+
+    function updateQuantity(index, quantity) {
+        cartItems[index].quantity = parseInt(quantity);
+        updateCart();
+    }
+
+    function updateCustomization(index, customization) {
+        cartItems[index].customization = customization;
+        updateCart();
+    }
+
+    function removeItem(index) {
+        cartItems.splice(index, 1);
+        updateCart();
+    }
+
+    document.getElementById('order-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        alert('Order placed successfully!');
+        localStorage.removeItem('cartItems');
+        window.location.href = 'payment.html';
     });
-}
 
-function updateCartSummary() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    let totalAmount = 0;
-
-    cartItems.forEach(item => {
-        totalAmount += item.price * item.quantity;
-    });
-
-    document.getElementById('total-amount').textContent = totalAmount;
-}
-
-function removeCartItem(index) {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    cartItems.splice(index, 1);
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    location.reload(); // Reload to update cart items and summary
-}
-
-function saveOrderDetails() {
-    const name = document.getElementById('name').value;
-    const address = document.getElementById('address').value;
-    const phone = document.getElementById('phone').value;
-
-    // You can save these details to local storage or send them to a server here
-    const orderDetails = {
-        name: name,
-        address: address,
-        phone: phone,
-        date: new Date().toISOString(),
-    };
-
-    localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
-}
+    updateCart();
+});
 //cart.html ended
 
 //order.html
