@@ -479,37 +479,6 @@ footer p {
     }
 }
 
-.Register {
-    background-color: #f3f3f3;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-}
-
-.Register form {
-    display: flex;
-    flex-direction: column;
-}
-
-.Register label {
-    font-size: 14px;
-    margin-bottom: 5px;
-    text-align: left;
-}
-
-.Register input[type="text"],
-.Register input[type="email"],
-.Register input[type="password"] {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
 .Register button[type="submit"] {
     background-color: #ffa41c;
     color: #ffffff;

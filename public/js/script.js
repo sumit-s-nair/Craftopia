@@ -72,49 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-//signup.html
-document.getElementById('signupForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
 
-    var usernameInput = document.getElementById('username');
-    var emailInput = document.getElementById('email');
-    var passwordInput = document.getElementById('password');
-    var confirmPasswordInput = document.getElementById('confirm-password');
-    var messageElement = document.getElementById('message');
-
-    // Clear previous messages
-    messageElement.textContent = '';
-
-    // Basic validation
-    if (!validateEmail(emailInput.value)) {
-        messageElement.textContent = 'Please enter a valid email address.';
-        messageElement.style.color = 'red';
-        return;
-    }
-
-    if (passwordInput.value.length < 8) {
-        messageElement.textContent = 'Password must be at least 8 characters long.';
-        messageElement.style.color = 'red';
-        return;
-    }
-
-    if (passwordInput.value !== confirmPasswordInput.value) {
-        messageElement.textContent = 'Passwords do not match. Please try again.';
-        messageElement.style.color = 'red';
-        return;
-    }
-
-    // If all validations pass, simulate successful signup
-    messageElement.textContent = 'Sign up successful! Welcome, ' + usernameInput.value + '!';
-    messageElement.style.color = 'green';
-
-    // Reset form fields
-    usernameInput.value = '';
-    emailInput.value = '';
-    passwordInput.value = '';
-    confirmPasswordInput.value = '';
-});
-//signup.html ended
 //register page 
 localStorage.setItem('adminUsername', 'Jainee Shah');
 localStorage.setItem('adminEmail', 'jaineeshah@gmail.com');
