@@ -216,163 +216,134 @@ document.querySelectorAll('.product button').forEach(button => {
 //product.html ended
 
 // cart.html 
-function loadCartItems() {
+document.addEventListener('DOMContentLoaded', function() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
     const cartTableBody = document.querySelector('#cart tbody');
-    const storedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const totalAmountElement = document.getElementById('total-amount');
 
-    let totalAmount = 0;
+    function updateCart() {
+        cartTableBody.innerHTML = '';
+        let totalAmount = 0;
 
-    
-    cartTableBody.innerHTML = '';
+        cartItems.forEach((item, index) => {
+            const row = document.createElement('tr');
 
-    
-    storedCartItems.forEach((item, index) => {
-        const row = document.createElement('tr');
+            // Product name
+            const productNameCell = document.createElement('td');
+            productNameCell.textContent = item.product;
+            row.appendChild(productNameCell);
 
-        row.innerHTML = `
-            <td>${item.name} - ${item.size}</td>
-            <td>&#8377;${item.price}</td>
-            <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="quantity-input"></td>
-            <td><input type="text" placeholder="Enter customizations" class="customization-input" data-index="${index}"></td>
-            <td>&#8377;<span class="item-total">${item.price * item.quantity}</span></td>
-            <td><button data-index="${index}" class="remove-btn">Remove</button></td>
-        `;
+            // Price
+            const priceCell = document.createElement('td');
+            priceCell.textContent = `₹${item.price}`;
+            row.appendChild(priceCell);
 
-        cartTableBody.appendChild(row);
+            // Quantity
+            const quantityCell = document.createElement('td');
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.value = item.quantity;
+            quantityInput.min = 1;
+            quantityInput.addEventListener('change', () => updateQuantity(index, quantityInput.value));
+            quantityCell.appendChild(quantityInput);
+            row.appendChild(quantityCell);
 
-        totalAmount += item.price * item.quantity;
+            // Customization
+            const customizationCell = document.createElement('td');
+            const customizationInput = document.createElement('input');
+            customizationInput.type = 'text';
+            customizationInput.value = item.customization || '';
+            customizationInput.placeholder = 'Enter customization details';
+            customizationInput.addEventListener('input', () => updateCustomization(index, customizationInput.value));
+            customizationCell.appendChild(customizationInput);
+            row.appendChild(customizationCell);
+
+            // Total
+            const totalCell = document.createElement('td');
+            const itemTotal = item.price * item.quantity;
+            totalCell.textContent = `₹${itemTotal}`;
+            row.appendChild(totalCell);
+
+            // Remove button
+            const removeCell = document.createElement('td');
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => removeItem(index));
+            removeCell.appendChild(removeButton);
+            row.appendChild(removeCell);
+
+            cartTableBody.appendChild(row);
+
+            totalAmount += itemTotal;
+        });
+
+        totalAmountElement.textContent = totalAmount;
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+
+    function updateQuantity(index, quantity) {
+        cartItems[index].quantity = parseInt(quantity);
+        updateCart();
+    }
+
+    function updateCustomization(index, customization) {
+        cartItems[index].customization = customization;
+        updateCart();
+    }
+
+    function removeItem(index) {
+        cartItems.splice(index, 1);
+        updateCart();
+    }
+
+    document.getElementById('order-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        alert('Order placed successfully!');
+        localStorage.removeItem('cartItems');
+        window.location.href = 'payment.html';
     });
 
-    
-    document.getElementById('total-amount').textContent = totalAmount;
-
-    
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', removeCartItem);
-    });
-
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        input.addEventListener('change', updateQuantity);
-    });
-}
-
-
-function removeCartItem(event) {
-    const index = event.target.dataset.index;
-    cartItems.splice(index, 1);
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    loadCartItems();
-}
-
-
-function updateQuantity(event) {
-    const index = event.target.dataset.index;
-    const newQuantity = parseInt(event.target.value);
-    cartItems[index].quantity = newQuantity;
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    loadCartItems();
-}
-
-document.addEventListener('DOMContentLoaded', loadCartItems);
+    updateCart();
+});
 //cart.html ended
 
 //order.html
 document.addEventListener('DOMContentLoaded', () => {
-    loadOrderSummary();
-    loadShipmentTracking();
-
-    // Handle order form submission
-    const orderForm = document.getElementById('order-form');
-    orderForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const name = document.getElementById('name').value;
-        const address = document.getElementById('address').value;
-        const phone = document.getElementById('phone').value;
-
-        if (storedCartItems.length > 0) {
-            // Save order items to local storage for tracking
-            const orderId = generateOrderId();
-            saveOrderItems(storedCartItems, orderId);
-
-            // Update shipment tracking
-            updateShipmentTracking(storedCartItems, orderId);
-
-            // Clear cart items from local storage
-            localStorage.removeItem('cartItems');
-
-            // Redirect to payment page or show confirmation
-            window.location.href = 'payment.html';
-        } else {
-            alert('Your cart is empty. Please add items to your cart before placing an order.');
-        }
-    });
+    displayOrders();
 });
 
-function loadOrderSummary() {
-    const orderTableBody = document.querySelector('#order-table tbody');
-    const totalAmountEl = document.getElementById('total-amount');
-    let totalAmount = 0;
+function displayOrders() {
+    const ordersTableBody = document.querySelector('#orders-table tbody');
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-    orderTableBody.innerHTML = '';
+    ordersTableBody.innerHTML = '';
 
-    storedCartItems.forEach(item => {
+    orders.forEach((order, index) => {
         const row = document.createElement('tr');
+
         row.innerHTML = `
-            <td>${item.name} - ${item.size}</td>
-            <td>&#8377;${item.price}</td>
-            <td>${item.quantity}</td>
-            <td>&#8377;${item.price * item.quantity}</td>
+            <td>${index + 1}</td>
+            <td>${order.date}</td>
+            <td>₹${order.totalAmount}</td>
+            <td>${order.status}</td>
+            <td><button onclick="trackOrder(${index})">Track</button></td>
         `;
-        totalAmount += item.price * item.quantity;
-        orderTableBody.appendChild(row);
-    });
 
-    totalAmountEl.textContent = totalAmount.toFixed(2);
-}
-
-function loadShipmentTracking() {
-    const trackingTableBody = document.querySelector('#tracking-table tbody');
-    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
-
-    trackingTableBody.innerHTML = '';
-
-    storedShipmentTracking.forEach(info => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${info.orderId}</td>
-            <td>${info.product}</td>
-            <td>${info.status}</td>
-        `;
-        trackingTableBody.appendChild(row);
+        ordersTableBody.appendChild(row);
     });
 }
 
-function saveOrderItems(orderItems, orderId) {
-    const storedOrderItems = JSON.parse(localStorage.getItem('orderItems')) || [];
-    orderItems.forEach(item => {
-        item.orderId = orderId;
-        storedOrderItems.push(item);
-    });
-    localStorage.setItem('orderItems', JSON.stringify(storedOrderItems));
+function trackOrder(index) {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const order = orders[index];
+
+    if (order) {
+        alert(`Tracking Details:\nOrder ID: ${index + 1}\nStatus: ${order.status}\nEstimated Delivery: ${order.estimatedDelivery}`);
+    } else {
+        alert('Order not found');
+    }
 }
 
-function updateShipmentTracking(orderItems, orderId) {
-    const storedShipmentTracking = JSON.parse(localStorage.getItem('shipmentTracking')) || [];
-    orderItems.forEach(item => {
-        const trackingInfo = {
-            orderId: orderId,
-            product: item.name,
-            status: 'Processing'  // Default status, can be updated later
-        };
-        storedShipmentTracking.push(trackingInfo);
-    });
-    localStorage.setItem('shipmentTracking', JSON.stringify(storedShipmentTracking));
-}
-
-function generateOrderId() {
-    return 'ORD' + Math.floor(Math.random() * 100000);
-}
 //order.html ended
 
 //payment.html 
@@ -692,3 +663,4 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 
 //admin chat and user chat ended
+ 
