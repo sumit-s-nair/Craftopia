@@ -3,7 +3,7 @@ import { dirname } from "path";
 import path from 'path';
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
-import ejs from 'ejs';
+import ejs, { name } from 'ejs';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
@@ -56,14 +56,69 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+app.get("/profile", requireAuth, (req, res) => {
+    res.render("profile", {
+        name: req.session.userName,
+        email: req.session.userEmail,
+        message: "",
+    });
+})
+
+// User Profile Update Route
+app.put('/user/profile', requireAuth, async (req, res) => {
+    const { name, email, currentPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        let updated = false;
+
+        if (name && name !== user.name) {
+            user.name = name;
+            updated = true;
+        }
+
+        if (email && email !== user.email) {
+            user.email = email;
+            updated = true;
+        }
+
+        if (currentPassword && newPassword && confirmPassword) {
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Incorrect current password' });
+            }
+
+            if (newPassword !== confirmPassword) {
+                return res.status(400).json({ message: 'New passwords do not match' });
+            }
+
+            user.password = await bcrypt.hash(newPassword, saltRounds);
+            updated = true;
+        }
+
+        if (updated) {
+            await user.save();
+            return res.status(200).json({ message: 'Profile updated successfully' });
+        } else {
+            return res.status(400).json({ message: 'No changes made to the profile' });
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+// Signup Route
 app.post('/signup', async (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
 
-    console.log("Password:", password);
-    console.log("Salt Rounds:", saltRounds);
-
     try {
-        // Checking if user already exists
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -72,57 +127,50 @@ app.post('/signup', async (req, res) => {
 
         if (password !== confirmPassword) {
             return res.render('signup', { message: 'Passwords do not match' });
-        }        
+        }
 
-        // Hashing the password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create new user
         const newUser = new User({
             name,
             email,
             password: hashedPassword,
             orders: [],
-            cart: []     
+            cart: []
         });
 
-        // Save new user to the database
         await newUser.save();
 
-        // Log the user in by setting session data
         req.session.userId = newUser._id;
-        req.session.email = newUser.email;
+        req.session.userName = newUser.name;
+        req.session.userEmail = newUser.email;
 
-        // Redirect to home page
-        res.redirect('/');
+        res.redirect('/home');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server error');
+        res.status(500).render('signup', { message: 'Server error. Please try again later.' });
     }
 });
 
+// Login Route
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
             return res.render('login', { message: 'Invalid email' });
         }
 
-        // Compare the password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.render('login', { message: 'Invalid password' });
         }
 
-        // Set session variables
         req.session.userId = user._id;
         req.session.userName = user.name;
         req.session.userEmail = user.email;
 
-        // Redirect to the home page after successful login
         res.redirect('/home');
     } catch (error) {
         console.error('Login error:', error);
@@ -130,27 +178,45 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
 app.get("/signup", (req, res) => {
-    res.render("signup",{ message: '' });
-})
+    if (req.session.userId) {
+        return res.redirect('/');
+    }
+    else {
+        res.render("signup", { message: '' });
+    }
+});
 
 app.get("/login", (req, res) => {
-    res.render("register", { message: '' });
-})
+    if (req.session.userId) {
+        return res.redirect('/');
+    }
+    else {
+        res.render("login", { message: '' });
+    }
+});
+
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/pages/index.html");
+    if (req.session.userId) {
+        res.render("index", { header: 'user-header' });
+
+    }
+    else{
+        res.render("index", { header: 'new-user-header' });
+    }
 })
 
 app.get("/home", (req, res) => {
-    res.sendFile(__dirname + "/public/pages/index.html");
+    if (req.session.userId) {
+        res.render("index", { header: 'user-header' });
+
+    }
+    else{
+        res.render("index", { header: 'new-user-header' });
+    }
 })
 
 app.get("/products", (req, res) => {
     res.sendFile(__dirname + "/public/pages/product.html");
-})
-
-app.get("/user/orders", (req, res) => {
-    res.render("orders")
 })

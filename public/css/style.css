@@ -575,9 +575,7 @@ form {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-form input[type="text"],
-form input[type="number"],
-form input[type="file"] {
+form input{
     display: block;
     width: 100%;
     padding: 10px;

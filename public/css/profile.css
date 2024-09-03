@@ -1,0 +1,51 @@
+.section {
+    display: grid;
+    grid-row: 30px, auto;
+}
+
+.hide {
+    display: none;
+}
+
+.orders, .security {
+    grid-row: 2;
+    height: 65vh;
+}
+
+.orders {
+    overflow-y: scroll;
+}
+
+.profile-navbar {
+    background-color: transparent;
+    margin: 1rem;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+}
+
+.profile-nav {
+    width: fit-content;
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.profile-nav:hover {
+    background-color: rgb(226, 226, 226);
+}
+
+form input{
+    width: 100%;
+}
+
+form label {
+    text-align: left;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}

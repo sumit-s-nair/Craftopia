@@ -73,67 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-//register page 
-localStorage.setItem('adminUsername', 'Jainee Shah');
-localStorage.setItem('adminEmail', 'jaineeshah@gmail.com');
-localStorage.setItem('adminPassword', 'jainee@123');
-
-document.getElementById('registrationForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-
-    const username = document.getElementById('username').value.trim(); 
-    const email = document.getElementById('email').value.trim(); 
-    const password = document.getElementById('password').value.trim();
-
-    const adminUsername = localStorage.getItem('adminUsername');
-    const adminEmail = localStorage.getItem('adminEmail');
-    const adminPassword = localStorage.getItem('adminPassword');
-
-  
-    console.log('Entered Username:', `"${username}"`);
-    console.log('Stored Admin Username:', `"${adminUsername}"`);
-    console.log('Entered Email:', `"${email}"`);
-    console.log('Stored Admin Email:', `"${adminEmail}"`);
-    console.log('Entered Password:', `"${password}"`);
-    console.log('Stored Admin Password:', `"${adminPassword}"`);
-
-   
-    if (username === adminUsername && email === adminEmail && password === adminPassword) {
-        console.log('Admin credentials matched. Redirecting to admin dashboard.');
-      
-        window.location.href = "../admin/admin-dashboard.html";
-    } else {
-        console.log('Credentials do not match admin. Redirecting to home page.');
-       
-        window.location.href = "../pages/index.html";
-    }
-});
-//register page ended
-//forgot password 
-document.getElementById('forgotPasswordForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    var emailInput = document.getElementById('email');
-    var email = emailInput.value;
-    var messageElement = document.getElementById('message');
-
-    if (validateEmail(email)) {
-        // Simulate sending reset password link
-        messageElement.textContent = 'A reset password link has been sent to ' + email + '.';
-        messageElement.style.color = 'green';
-    } else {
-        // Display error message
-        messageElement.textContent = 'Please enter a valid email address.';
-        messageElement.style.color = 'red';
-    }
-});
-
-// Function to validate email
-function validateEmail(email) {
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-}
-//forgot password ended
 //product.html
 let cartItems = [];
 
@@ -264,45 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCart();
 });
 //cart.html ended
-
-//order.html
-document.addEventListener('DOMContentLoaded', () => {
-    displayOrders();
-});
-
-function displayOrders() {
-    const ordersTableBody = document.querySelector('#orders-table tbody');
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-
-    ordersTableBody.innerHTML = '';
-
-    orders.forEach((order, index) => {
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${order.date}</td>
-            <td>₹${order.totalAmount}</td>
-            <td>${order.status}</td>
-            <td><button onclick="trackOrder(${index})">Track</button></td>
-        `;
-
-        ordersTableBody.appendChild(row);
-    });
-}
-
-function trackOrder(index) {
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const order = orders[index];
-
-    if (order) {
-        alert(`Tracking Details:\nOrder ID: ${index + 1}\nStatus: ${order.status}\nEstimated Delivery: ${order.estimatedDelivery}`);
-    } else {
-        alert('Order not found');
-    }
-}
-
-//order.html ended
 
 //payment.html 
 document.addEventListener('DOMContentLoaded', function () {

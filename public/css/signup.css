@@ -16,13 +16,8 @@
     max-width: 400px;
 }
 
-#signupForm > input, #signupForm > label {
-    margin-bottom: 10px;
-    height: 30px;
-    color: #313131;
-}
-
-#signupForm > input {
-    border: #313131 solid 0.1px;
-    border-radius: 5px;
+label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    text-align: left;
 }

@@ -11,6 +11,7 @@ class UserHeader extends HTMLElement {
                 <a href="/">Home</a>
                 <a href="/cart">Cart</a>
                 <a href="/products">Products</a>
+                <a href="/profile">Profile</a>
                 </ul>
 
             <div class="rightnav"> 
@@ -45,8 +46,6 @@ class NewUserHeader extends HTMLElement {
 
                         <a href="/">Home</a>
                         <a href="/products">Products</a>
-                        <a href="/cart"> add to cart</a>
-                        <a href="/orders"> My Orders</a>
                         <a href="/help"> Chat </a>
                         <a href="/login">Login</a>
                     </ul>
