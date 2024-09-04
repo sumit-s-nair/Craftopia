@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <<%= header %>></<%= header %>>
+    <main>
+        <table id="cart">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Customization</th>
+                    <th>Total</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cartItems.forEach(item => { %>
+                    <tr>
+                        <td><%= item.product.name %></td>
+                        <td>₹<%= item.product.price %></td>
+                        <td><%= item.quantity %></td>
+                        <td><%= item.product.customization %></td>
+                        <td>₹<%= item.product.price * item.quantity %></td>
+                        <td><a href="/cart/remove/<%= item.product._id %>">Remove</a></td>
+                    </tr>
+                <% }) %>
+            </tbody>            
+        </table>
+        <div id="cart-summary">
+            <h2>Cart Summary</h2>
+            <p>Total Amount: ₹<span id="total-amount"><%= totalAmount %></span></p>
+        </div>
+        <div id="order-details">
+            <h2>Order Details</h2>
+            <form id="order-form" action="/order/place" method="POST">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="shippingAddress">Address:</label>
+                <textarea id="shippingAddress" name="shippingAddress" required></textarea>
+                
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+                
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        &copy; 2024 Handmade Crafts - Craftopia | 
+        <a href="https://www.instagram.com/craftopia08?igsh=M3kybDgxMGE4YjRp" target="_blank">Follow us on Instagram</a> | 
+        Contact us: +91-1234567890
+    </footer>
+
+    <script src="/js/navbars.js"></script>
+</body>
+</html>

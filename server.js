@@ -14,6 +14,7 @@ import User from './models/Users.js';
 import Product from './models/Products.js';
 import Order from './models/Orders.js';
 import Admin from './models/Admin.js';
+import Cart from './models/Cart.js';
 
 dotenv.config({ path: './process.env' })
 const mongoUri = process.env.MONGO_URI;
@@ -66,7 +67,7 @@ app.get("/profile", requireAuth, (req, res) => {
 
 // User Profile Update Route
 app.put('/user/profile', requireAuth, async (req, res) => {
-    const { name, email, currentPassword, newPassword, confirmPassword } = req.body;
+    const { name, email } = req.body;
     const userId = req.session.userId;
 
     try {
@@ -76,41 +77,49 @@ app.put('/user/profile', requireAuth, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        let updated = false;
-
         if (name && name !== user.name) {
             user.name = name;
-            updated = true;
         }
 
         if (email && email !== user.email) {
             user.email = email;
-            updated = true;
         }
 
-        if (currentPassword && newPassword && confirmPassword) {
-            const isMatch = await bcrypt.compare(currentPassword, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Incorrect current password' });
-            }
-
-            if (newPassword !== confirmPassword) {
-                return res.status(400).json({ message: 'New passwords do not match' });
-            }
-
-            user.password = await bcrypt.hash(newPassword, saltRounds);
-            updated = true;
-        }
-
-        if (updated) {
-            await user.save();
-            return res.status(200).json({ message: 'Profile updated successfully' });
-        } else {
-            return res.status(400).json({ message: 'No changes made to the profile' });
-        }
+        await user.save();
+        res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error('Error updating profile:', error);
-        return res.status(500).json({ message: 'Server error. Please try again later.' });
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+app.put('/user/profile/password', requireAuth, async (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Incorrect current password' });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ message: 'New passwords do not match' });
+        }
+
+        user.password = await bcrypt.hash(newPassword, saltRounds);
+        await user.save();
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 });
 
@@ -178,6 +187,37 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Add to cart route
+app.post('/cart/add', requireAuth, async (req, res) => {
+    const { productId, quantity } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the product is already in the cart
+        const cartItemIndex = user.cart.findIndex(item => item.product.toString() === productId);
+
+        if (cartItemIndex > -1) {
+            // Update quantity if product already in the cart
+            user.cart[cartItemIndex].quantity += quantity;
+        } else {
+            // Add new item to the cart
+            user.cart.push({ product: productId, quantity });
+        }
+
+        await user.save();
+        res.status(200).json({ message: 'Product added to cart successfully' });
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
 app.get("/signup", (req, res) => {
     if (req.session.userId) {
         return res.redirect('/');
@@ -218,5 +258,126 @@ app.get("/home", (req, res) => {
 })
 
 app.get("/products", (req, res) => {
-    res.sendFile(__dirname + "/public/pages/product.html");
+    if (req.session.userId) {
+        res.render("product", { header: 'user-header' });
+
+    }
+    else{
+        res.render("product", { header: 'new-user-header' });
+    }
 })
+
+app.get('/cart', requireAuth, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId).populate('cart.product');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Calculate the total amount
+        const totalAmount = user.cart.reduce((total, item) => {
+            return total + item.product.price * item.quantity;
+        }, 0);
+
+        res.render('cart', {
+            cartItems: user.cart,
+            totalAmount, // Passing the total amount to the view
+            header: 'user-header'
+        });
+    } catch (error) {
+        console.error('Error fetching cart:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+app.post('/cart/remove/:productId', requireAuth, async (req, res) => {
+    const { productId } = req.params;
+    const userId = req.session.userId;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.cart = user.cart.filter(item => item.product.toString() !== productId);
+
+        await user.save();
+        res.status(200).json({ message: 'Product removed from cart successfully' });
+    } catch (error) {
+        console.error('Error removing from cart:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+app.post('/order/place', requireAuth, async (req, res) => {
+    const { shippingAddress } = req.body;
+    const userId = req.session.userId;
+
+    try {
+        const user = await User.findById(userId).populate('cart.product');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.cart.length === 0) {
+            return res.status(400).json({ message: 'Your cart is empty' });
+        }
+
+        const totalAmount = user.cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+
+        const newOrder = new Order({
+            user: userId,
+            products: user.cart,
+            totalAmount,
+            shippingAddress,
+            paymentMethod: 'Cash on Delivery', // payment option
+            status: 'Pending',
+        });
+
+        await newOrder.save();
+
+        user.cart = [];
+        await user.save();
+
+        res.status(200).json({ message: 'Order placed successfully', orderId: newOrder._id });
+    } catch (error) {
+        console.error('Error placing order:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+app.get('/user/orders', requireAuth, async (req, res) => {
+    const userId = req.session.userId;
+
+    try {
+        // Find the user and populate their orders with product details
+        const user = await User.findById(userId).populate({
+            path: 'orders', // assuming orders is an array of order IDs
+            populate: {
+                path: 'products.product', // populate product details within orders
+                model: 'Product' // replace with your actual model name for products
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.render('orders', {
+            orders: user.orders,
+            header: 'user-header'
+        });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+});
+
+
+app.use((req, res, next) => {
+    res.status(404).sendFile(__dirname + "/public/pages/page-not-found.html");
+});

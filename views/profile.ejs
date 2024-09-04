@@ -1,83 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile-Craftopia</title>
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/profile.css" />
-  </head>
-  <body>
+</head>
+<body>
     <user-header></user-header>
     <header>
-      <h1>Your Account</h1>
+        <h1>Your Account</h1>
     </header>
     <main>
-      <div class="Your Account">
-        <div class="profile-header">
-          <h1>Hello, <%= name %></h1>
+        <div class="Your Account">
+            <div class="profile-header">
+                <h1>Hello, <%= name %></h1>
+            </div>
+
+            <div class="section">
+                <div class="profile-navbar">
+                    <button class="profile-nav" id="security-btn">Security</button>
+                    <button class="profile-nav" id="orders-btn">Orders</button>
+                </div>
+
+                <!-- Orders Section -->
+                <div class="orders hide" id="orders-section">
+                  <h2>Your Orders</h2>
+                  <p>View and track your orders</p>
+                  <section id="orders">
+                      <table>
+                          <thead>
+                              <tr>
+                                  <th>Order ID</th>
+                                  <th>Date</th>
+                                  <th>Amount (₹)</th>
+                                  <th>Status</th>
+                                  <th>Track Order</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <% if (orders && orders.length > 0) { %>
+                                  <% orders.forEach(order => { %>
+                                      <tr>
+                                          <td><%= order._id %></td>
+                                          <td><%= order.createdAt.toDateString() %></td>
+                                          <td><%= order.totalAmount %></td>
+                                          <td><%= order.status %></td>
+                                          <td><a href="/track-order/<%= order._id %>">Track</a></td>
+                                      </tr>
+                                  <% }) %>
+                              <% } else { %>
+                                  <tr>
+                                      <td colspan="5">No orders found</td>
+                                  </tr>
+                              <% } %>
+                          </tbody>
+                      </table>
+                  </section>
+                </div>
+
+
+                <!-- Login & Security Section -->
+                <div class="security" id="security-section">
+                    <h2>Login & Security</h2>
+                    <p>Manage your login details and security settings.</p>
+
+                    <form id="edit-user-form" method="POST" action="/user/profile?_method=PUT">
+                        <p id="message"></p>
+                        
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required value="<%= name %>">
+                        
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required value="<%= email %>">
+                        
+                        <button type="submit">Save Changes</button>
+                    </form>
+
+                    <form id="edit-password-form" method="POST" action="/user/profile/password?_method=PUT">
+                        <label for="current-password">Current Password:</label>
+                        <input type="password" id="current-password" name="currentPassword" required>
+                    
+                        <label for="new-password">New Password:</label>
+                        <input type="password" id="new-password" name="newPassword" required>
+                    
+                        <label for="confirm-password">Re-Enter New Password:</label>
+                        <input type="password" id="confirm-password" name="confirmPassword" required>
+                        
+                        <button type="submit">Update Password</button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="section">
-          <div class="profile-navbar">
-            <button class="profile-nav" id="security-btn">Security</button>
-            <button class="profile-nav" id="orders-btn">Orders</button>
-          </div>
-
-          <!-- Orders Section -->
-          <div class="orders hide" id="orders-section">
-            <h2>Your Orders</h2>
-            <p>View, track your orders</p>
-            <section id="orders">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Amount (₹)</th>
-                            <th>Status</th>
-                            <th>Track Order</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      
-                    </tbody>
-                </table>
-                
-            </section>
-          </div>
-
-          <!-- Login & Security Section -->
-          <div class="security" id="security-section">
-            <h2>Login & Security</h2>
-            <p>Manage your login details and security settings.</p>
-            <form id="edit-user-form" method="post" action="">
-              <p id="message"></p>
-          
-              <label for="name">Name:</label>
-              <input type="text" id="name" name="name" required value="<%= name %>">
-              
-              <label for="email">Email:</label>
-              <input type="email" id="email" name="email" required value="<%= email %>">
-              
-              <label for="current-password">Current Password:</label>
-              <input type="password" id="current-password" name="currentPassword">
-          
-              <label for="new-password">New Password:</label>
-              <input type="password" id="new-password" name="newPassword">
-          
-              <label for="confirm-password">Re-Enter New Password:</label>
-              <input type="password" id="confirm-password" name="confirmPassword">
-              
-              <button type="submit">Save</button>
-          </form>          
-          
-          </div>
-          
-        </div>
-      </div>
     </main>
     <script src="/js/navbars.js"></script>
     <script src="/js/profile.js"></script>
-  </body>
+</body>
 </html>

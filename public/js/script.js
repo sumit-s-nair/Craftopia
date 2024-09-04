@@ -266,37 +266,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 //payment.html ended
-// amdin-dashboard.html
-document.addEventListener('DOMContentLoaded', function () {
-    const welcomeMessage = document.querySelector('main h2');
-    const manageProductsLink = document.querySelector('nav a[href="../admin/add-product.html"]');
-    const viewOrdersLink = document.querySelector('nav a[href="../admin/view-orders.html"]');
-    const viewCustomersLink = document.querySelector('nav a[href="../admin/view-customers.html"]');
-
-   
-    welcomeMessage.textContent = `Welcome, Admin!`;
-
-    
-    manageProductsLink.title = 'Add new products to the inventory';
-    viewOrdersLink.title = 'View and manage all customer orders';
-    viewCustomersLink.title = 'View customer details and manage their accounts';
-
-    
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 3000); 
-    }
-
-    
-    showNotification('Welcome to the Admin Dashboard!', 'info');
-});
-//admin-dashboard.html ended
 
 //add product.html
 document.addEventListener('DOMContentLoaded', function () {
