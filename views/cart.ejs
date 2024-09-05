@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <<%= header %>></<%= header %>>
+    <user-header></user-header>
     <main>
         <table id="cart">
             <thead>
@@ -26,11 +26,17 @@
                         <td><%= item.product.name %></td>
                         <td>₹<%= item.product.price %></td>
                         <td><%= item.quantity %></td>
-                        <td><%= item.product.customization %></td>
+                        <td><%= item.product.customization || 'N/A' %></td>
                         <td>₹<%= item.product.price * item.quantity %></td>
-                        <td><a href="/cart/remove/<%= item.product._id %>">Remove</a></td>
+                        <td>
+                            <button class="danger icon delete-btn" data-id="<%= item.product._id %>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                                </svg>
+                            </button>                            
+                        </td>
                     </tr>
-                <% }) %>
+                <% }) %>                
             </tbody>            
         </table>
         <div id="cart-summary">
@@ -53,12 +59,9 @@
             </form>
         </div>
     </main>
-    <footer>
-        &copy; 2024 Handmade Crafts - Craftopia | 
-        <a href="https://www.instagram.com/craftopia08?igsh=M3kybDgxMGE4YjRp" target="_blank">Follow us on Instagram</a> | 
-        Contact us: +91-1234567890
-    </footer>
+    <user-footer></user-footer>
 
     <script src="/js/navbars.js"></script>
+    <script src="/js/cart.js"></script>
 </body>
 </html>

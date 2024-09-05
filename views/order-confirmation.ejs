@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <user-header></user-header>
+    <main>
+        <h1>Order Confirmation</h1>
+        <p>Thank you for your order!</p>
+        <h2>Order Details:</h2>
+        <p>Order ID: <%= order._id %></p>
+        <p>Total Amount: ₹<%= order.totalAmount %></p>
+        <p>Shipping Address: <%= order.shippingAddress %></p>
+        <p>Status: <%= order.status %></p>
+
+        <h3>Products:</h3>
+        <ul>
+            <% order.products.forEach(item => { %>
+                <li><%= item.product.name %> - ₹<%= item.product.price %> x <%= item.quantity %></li>
+            <% }) %>
+        </ul>        
+
+        <a href="/products">Continue Shopping</a>
+    </main>
+    <user-footer></user-footer>
+
+    <script src="/js/navbars.js"></script>
+</body>
+</html>

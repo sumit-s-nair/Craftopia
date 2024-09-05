@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
   ],
   totalAmount: { type: Number, required: true },
   shippingAddress: { type: String, required: true },
-  paymentMethod: { type: String, enum: ['Cash on Delivery'], default: 'Cash on Delivery' },
+  paymentMethod: { type: String, enum: ['Cash on Delivery', 'UPI', 'Credit/Debit Card', 'Pending'], default: 'Cash on Delivery' },
   status: { type: String, enum: ['Pending', 'Shipped', 'Delivered'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now }
 });
@@ -18,3 +18,4 @@ const orderSchema = new mongoose.Schema({
 const Order = mongoose.model('Order', orderSchema);
 
 export default Order;
+

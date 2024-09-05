@@ -4,22 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with Admin</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <header>
-        <h1> Chat </h1>
-        <nav class="navbar">
+    <<%= header %>></<%= header %>>
 
-            <ul class="nav-list">
-            <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;           
-            <div class="tagline">
-                <h2 class="tagline">Welcome to Craftopia </h2>
-                <span id="typedText" class="typed-text"></span>
-            </div> &nbsp;           
-                <a href="index.html">Home</a> &nbsp;              
-            </ul> <br>
-    </header>
     <main>
         <div id="chat-container">
             <div id="chat-box">
@@ -29,7 +18,9 @@
             <button id="send-button">Send</button>
         </div>
     </main>
-    <script src="../js/script.js"></script>
+    <user-footer></user-footer>
+
+    <script src="/js/script.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 

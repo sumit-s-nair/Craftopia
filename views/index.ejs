@@ -6,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
     <title>Handmade Crafts- Craftopia</title>
-    <link rel="stylesheet" href="../css/style.css">
-   
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-
     <<%= header %>></<%= header %>>
 
     <div class="tagline">
@@ -22,19 +21,40 @@
     </div>
     <main>
         <h1>Craftopia</h1>
-        <h2>Glimse of the Products</h2>
-        <div class="myvideo">
-            <video autoplay loop muted   src="../assets/video/video.mp4" alt="video">
-        </div> <br>
+        <h2>Glimpse of the Products</h2>
 
+        <!-- Latest Products Section -->
+
+        <div class="myvideo">
+            <video autoplay loop muted src="/assets/video/video.mp4" alt="video">
+        </div>
+        <h2 style="margin: 2rem;">Check out the latest Products</h2>
+        <section class="product-list" style="margin: 2rem;">
+            <% products.forEach(product=> { %>
+                <div class="product">
+                    <p>
+                        <%= product.name %>
+                    </p>
+                    <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+                    <p>
+                        <%= product.description %>
+                    </p>
+                    <p>
+                        <%= product.price %>&#8377;
+                    </p>
+                    <form action="/cart/add" method="POST">
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                </div>
+                <% }) %>
+        </section>
     </main>
 
     <user-footer></user-footer>
 
     <script src="/js/script.js" type="module"></script>
     <script src="/js/navbars.js" type="module"></script>
+</body>
 
-    </body>
-    </html>
-
-    
+</html>
