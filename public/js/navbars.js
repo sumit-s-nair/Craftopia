@@ -73,8 +73,7 @@ class AdminHeader extends HTMLElement {
                         <a href="/admin/add-product">Add Product</a>
                         <a href="/admin/view-orders">View Orders</a>
                         <a href="/admin/view-customers">View Customers</a>
-                        <a href="/admin/admin-chat.html">Messages</a>
-                        <a href="/admin/admin-payments.html">Payment Received</a>
+                        <a href="/admin/payments">Payment Received</a>
                     </ul>
                     <div class="rightnav"> 
                         <div class="logout">

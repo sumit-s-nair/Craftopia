@@ -538,6 +538,15 @@ function requireAdminAuth(req, res, next) {
     next();
 }
 
+app.get('/payments', requireAdminAuth, async (req, res) => {
+    try {
+        const payments = await Order.find().populate('user', 'name email');
+        res.json(payments);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Admin Login Route
 app.get('/admin/login', (req, res) => {
     res.render('admin-login', { message: '' });
@@ -691,6 +700,10 @@ app.get('/admin/view-products', requireAdminAuth, async (req, res) => {
         console.error('Error fetching products:', error);
         res.status(500).json({ message: 'Server error. Please try again later.' });
     }
+});
+
+app.get('/admin/payments', requireAdminAuth, async (req, res) => {
+    res.sendFile(__dirname + "/public/admin/admin-payments.html")
 });
 
 // User logout

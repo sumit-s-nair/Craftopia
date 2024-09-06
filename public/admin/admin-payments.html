@@ -4,29 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments Received </title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <header>
-        <h1>Payment Received</h1>
-    <nav class="navbar">
-
-        <ul class="nav-list">
-        <div class="logo"><img src="../assets/images/logo.jpeg" width="50px" alt="logo"></div> &nbsp;
-        
-        <div class="tagline">
-            <h2 class="tagline">Welcome to Craftopia </h2>
-            <span id="typedText" class="typed-text"></span>
-        </div> &nbsp;
-        <a href="../admin/admin-dashboard.html">Dashboard</a>         
-        <a href="../admin/add-product.html">Add Product</a>
-        <a href="../admin/view-orders.html">View Orders</a>
-        <a href="../admin/view-customers.html">View Customers</a>
-        <a href="../admin/admin-payments.html">Payment Received</a>
-        <a href="../pages/index.html">Logout</a>
-          
-        </ul> <br> 
-</header>
+<admin-header></admin-header>
 <main>
     <div class="balance-summary">
         <h2>Total Balance: ₹<span id="total-balance">0.00</span></h2>
@@ -49,6 +30,9 @@
     </table>
 </main>
 
-<script src="../js/script.js"></script>
+<user-footer></user-footer>
+
+<script src="/js/navbars.js"></script>
+<script src="/js/payments.js"></script>
 </body>
 </html>
